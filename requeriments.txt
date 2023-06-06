@@ -1,0 +1,6 @@
+SQLAlchemy==2.0.4
+SQLAlchemy-Utils==0.40.0
+pandas==1.5.3
+python-dotenv==1.0.0
+PyMySQL==1.0.2
+azure-iot-device==2.12.0
