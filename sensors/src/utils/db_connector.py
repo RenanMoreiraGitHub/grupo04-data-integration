@@ -77,16 +77,19 @@ class IoTHub:
         except:
             raise Exception("Connection to Azure IoT Hub failed.\nVerify your credentials or internet connection")
 
-    def send_message(self, sensor:str, values:list, tag:str, tag_alert:str, alert:bool) -> None:
+    def send_message(self, sensor:str, values:list, tag:str, alert:bool) -> None:
         """Send a message to IoT Hub"""
-        payload = f"{sensor}/"+"/".join(str(round(value,2)) if isinstance(value,(int,float)) else str(value) for value in values)
+        # payload = f"{sensor}/"+"/".join(str(round(value,2)) if isinstance(value,(int,float)) else str(value) for value in values)
         
-        msg = Message(f"{payload.replace(' ','_')}")
+        # "Body":"{"sensor":"NPK","dado":"/140/40/166/99.8/","dataColeta":"2023-06-07_19:51:32"}"}
+        payload = '{' + f'"Id":{self.id}, "sensor": "{sensor}", "dado": "{values[0]}", "dataColeta": "{values[1]}"' +'}'
+        # msg = Message(f"'{payload.replace(' ','_')}'")
+        msg = Message(payload)
 
         msg.content_type = "application/json"
         msg.content_encoding = "utf-8"
         msg.custom_properties["SensorId"] = tag
-        msg.custom_properties[tag_alert] = alert
+        msg.custom_properties["Alert"] = alert
         
         print(f"sending message # {self.id}")
         self.client.send_message(msg)
