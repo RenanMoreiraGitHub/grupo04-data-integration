@@ -120,37 +120,39 @@ def run(bd:object=None, s3:object=None, iot:object=None) -> None:
         collected = tcrt.simulate_soybeans_collected()
         humidity_grain = umigrain.simulate_humidity()
 
-        if random.randint(0,10)>3:
+        # if random.randint(0,10)>3:
 
-            if bd:
-                print("Insert data into bd")
-                bd.insert(QUERY_MEDIDAS, ["BMP180", pressure, data])
-                bd.insert(QUERY_MEDIDAS, ["BMP180", temperature, data])
-                bd.insert(QUERY_MEDIDAS, ["Anemometro", air_speed, data])
-                bd.insert(QUERY_MEDIDAS, ["NPK", n, data])
-                bd.insert(QUERY_MEDIDAS, ["NPK", p, data])
-                bd.insert(QUERY_MEDIDAS, ["NPK", k, data])
-                bd.insert(QUERY_MEDIDAS, ["DHT11", humidity, data])
-                bd.insert(QUERY_MEDIDAS, ["TCRT5000", capacity, data])
-                bd.insert(QUERY_MEDIDAS, ["TCRT5000", collected, data])
-                bd.insert(QUERY_MEDIDAS, ["Umigrain", humidity_grain, data])
+        if bd:
+            print("Insert data into bd")
+            bd.insert(QUERY_MEDIDAS, ["BMP180", pressure, data])
+            bd.insert(QUERY_MEDIDAS, ["BMP180", temperature, data])
+            bd.insert(QUERY_MEDIDAS, ["Anemometro", air_speed, data])
+            bd.insert(QUERY_MEDIDAS, ["NPK", n, data])
+            bd.insert(QUERY_MEDIDAS, ["NPK", p, data])
+            bd.insert(QUERY_MEDIDAS, ["NPK", k, data])
+            bd.insert(QUERY_MEDIDAS, ["DHT11", humidity, data])
+            bd.insert(QUERY_MEDIDAS, ["TCRT5000", capacity, data])
+            bd.insert(QUERY_MEDIDAS, ["TCRT5000", collected, data])
+            bd.insert(QUERY_MEDIDAS, ["Umigrain", humidity_grain, data])
 
-            if s3:
-                #TODO:
-                pass
+        if s3:
+            #TODO:
+            pass
 
-            if iot:
-                print("Insert data into IoT Hub")
-                iot.send_message('BMP180', [pressure,data], 'sensor',bpm.get_batery()<25)
-                iot.send_message('BMP180', [temperature,data], 'sensor',bpm.get_batery()<25)
-                iot.send_message('Anemometro', [air_speed,data], 'sensor',anemometro.get_batery()<25)
-                iot.send_message('NPK', [n,data], 'sensor',npk.get_batery()<25)
-                iot.send_message('NPK', [p,data], 'sensor',npk.get_batery()<25)
-                iot.send_message('NPK', [k,data], 'sensor',npk.get_batery()<25)
-                iot.send_message('DHT11', [humidity,data], 'sensor',dht.get_batery()<25)
-                iot.send_message('TCRT5000', [capacity,data], 'sensor',tcrt.get_batery()<25)
-                iot.send_message('TCRT5000', [collected,data], 'sensor',tcrt.get_batery()<25)
-                iot.send_message('Umigrain', [humidity_grain,data], 'sensor',umigrain.get_batery()<25)
+        if iot:
+            print("Insert data into IoT Hub")
+            iot.send_message([n,p,k,temperature,humidity,air_speed,pressure,capacity,collected,humidity_grain,bpm.get_batery()],'sensor','alert')
+
+                # iot.send_message('BMP180', [pressure,data], 'sensor',bpm.get_batery()<25)
+                # iot.send_message('BMP180', [temperature,data], 'sensor',bpm.get_batery()<25)
+                # iot.send_message('Anemometro', [air_speed,data], 'sensor',anemometro.get_batery()<25)
+                # iot.send_message('NPK', [n,data], 'sensor',npk.get_batery()<25)
+                # iot.send_message('NPK', [p,data], 'sensor',npk.get_batery()<25)
+                # iot.send_message('NPK', [k,data], 'sensor',npk.get_batery()<25)
+                # iot.send_message('DHT11', [humidity,data], 'sensor',dht.get_batery()<25)
+                # iot.send_message('TCRT5000', [capacity,data], 'sensor',tcrt.get_batery()<25)
+                # iot.send_message('TCRT5000', [collected,data], 'sensor',tcrt.get_batery()<25)
+                # iot.send_message('Umigrain', [humidity_grain,data], 'sensor',umigrain.get_batery()<25)
 
                 # iot.send_message('NPK', [n,p,k,npk.get_batery(),data],'sensor',npk.get_batery()<25)
                 # iot.send_message('BMP180', [temperature,pressure,bpm.get_batery(),data],'sensor',bpm.get_batery()<25)
@@ -159,9 +161,10 @@ def run(bd:object=None, s3:object=None, iot:object=None) -> None:
                 # iot.send_message('TCRT5000', [capacity,collected,tcrt.get_batery(),data],'sensor',tcrt.get_batery()<25)
                 # iot.send_message('Umigrain', [humidity_grain,umigrain.get_batery(),data],'sensor',umigrain.get_batery()<25)
 
-        else:
-            print("Error getting data")
-            iot.send_message("Error",["Error getting data",data],'sensor',False)
+        # else:
+        #     print("Error getting data")
+        #     # iot.send_message("Error",["Error getting data"],'sensor',False)
+        #     iot.send_message_erro()
 
         count-=1
-        time.sleep(30)
+        time.sleep(5)

@@ -77,19 +77,34 @@ class IoTHub:
         except:
             raise Exception("Connection to Azure IoT Hub failed.\nVerify your credentials or internet connection")
 
-    def send_message(self, sensor:str, values:list, tag:str, alert:bool) -> None:
+    def send_message(self, values:list, tag:str, alert:bool) -> None:
         """Send a message to IoT Hub"""
         # payload = f"{sensor}/"+"/".join(str(round(value,2)) if isinstance(value,(int,float)) else str(value) for value in values)
         
         # "Body":"{"sensor":"NPK","dado":"/140/40/166/99.8/","dataColeta":"2023-06-07_19:51:32"}"}
-        payload = '{' + f'"Id":{self.id}, "sensor": "{sensor}", "dado": "{values[0]}", "dataColeta": "{values[1]}"' +'}'
-        # msg = Message(f"'{payload.replace(' ','_')}'")
+        # payload = '{' + f'"Id":{self.id}, "sensor": "{sensor}", "dado": "{values[0]}", "dataColeta": "{values[1]}"' +'}'
+
+        payload = '{'+ f'"N":{values[0]},"P":{values[1]},"K":{values[2]},"temp":{values[3]},"humi":{round(values[4],2)},"var":{values[5]},"press":{values[6]},"caps":{int(values[7])},"qtdg":{int(values[8])},"umig":{round(values[9],2)},"batery":{round(values[10],2)},"tema":"soja"' +'}' 
+
+        msg = Message(f"'{payload.replace(' ','_')}'")
         msg = Message(payload)
 
         msg.content_type = "application/json"
         msg.content_encoding = "utf-8"
-        msg.custom_properties["SensorId"] = tag
+        msg.custom_properties["tema"] = "soja"
         msg.custom_properties["Alert"] = alert
+        
+        print(f"sending message # {self.id}")
+        print(payload)
+        self.client.send_message(msg)
+        self.id+=1
+
+
+    def send_message_erro(self) -> None:
+        msg = Message('{"Error getting data"}')
+
+        msg.content_type = "application/json"
+        msg.content_encoding = "utf-8"
         
         print(f"sending message # {self.id}")
         self.client.send_message(msg)
