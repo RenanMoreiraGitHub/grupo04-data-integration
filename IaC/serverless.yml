@@ -1,0 +1,40 @@
+service: aws-python-project
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.9
+
+functions:
+  rawToStagedLambda:
+    handler: raw_to_staged/app.lambda_handler
+    timeout: 30
+    name: raw_to_staged_lambda
+    role: arn:aws:iam::181076026206:role/LabRole
+    events:
+      - s3:
+          bucket: raw-soybean-gp4-sptech
+          event: s3:ObjectCreated:*
+
+  stagedToConsumedLambda:
+    handler: staged_to_consumed/app.lambda_handler
+    timeout: 30
+    name: staged_to_consumed_lambda
+    role: arn:aws:iam::181076026206:role/LabRole
+    events:
+      - s3:
+          bucket: stagged-soybean-gp4-sptech
+          event: s3:ObjectCreated:*
+
+resources:
+  Resources:
+
+    s3BucketConsumed:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: Private
+        BucketName: consumed-soybean-gp4-sptech
+        Tags:
+          - Key: Name
+            Value: consumed-soybean-gp4-sptech

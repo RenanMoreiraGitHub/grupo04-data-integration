@@ -1,0 +1,9 @@
+garcez@garcez-Inspiron-7472:~/Documentos/faculdade/IoT/azure-iot-sdk-csharp/iothub/device/samples/how to guides/HubRoutingSample$ dotnet run --PrimaryConnectionString "HostName=rodrigo02211059.azure-devices.net;DeviceId=rodrigo02211059;SharedAccessKey=TeFXE3MBh+7GdJxfrcVW6bvVMCPXIjYGWUoWEaUTpR8="
+
+
+
+export DOTNET_ROOT=$HOME/.dotnet
+
+
+
+export PATH=$PATH:$HOME/.dotnet:$HOME/.dotnet/tools
