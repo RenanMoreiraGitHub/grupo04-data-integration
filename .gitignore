@@ -152,5 +152,27 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-.pem
-.txt
+*.pem
+*.txt
+*.env
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Serverless directories
+.serverless
