@@ -132,3 +132,61 @@ resources:
         Tags:
           - Key: Name
             Value: instance-soybean-dev-gp4-sptech
+
+    #ALERTA (SNS)
+    MySNSTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        KmsMasterKeyId: 6e41aefa-4e37-45d7-bb94-625bfbf8b1b8
+        Tags:
+          - Key: Name
+            Value: sns-topic-alert-email
+        DisplayName: sns-topic-alert-email
+
+    MySNSSubscriptionEdu:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: eduardo.oliveira@sptech.school
+    
+    MySNSSubscriptionRenan:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: renan.lima@sptech.school
+    MySNSSubscriptionJeremy:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: jeremy.freitas@sptech.school
+    MySNSSubscriptionGabriel:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: gabriel.pedrosa@sptech.school
+    MySNSSubscriptionEnan:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: enan.oliveira@sptech.school
+    MySNSSubscriptionGarcez:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: rodrigo.hermann@sptech.school
+
+#Secret manager
+
+    
