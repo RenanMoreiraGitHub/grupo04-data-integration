@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, DateType
 from pyspark.sql.functions import from_json
 
-BUCKET = 'raw-sprint-3'
+BUCKET = 'raw-soybean-gp4-sptech'
 
 def main():
     spark = SparkSession.builder.appName('raw_stage')\
@@ -23,16 +23,11 @@ def main():
     except:
         raise "ERROR GETTING OBJECT."
 
-    # last_filie='8f7f485f-601e-0048-1b4c-9aa23006697e.json'
     with open(f'./{last_filie}', "r") as f:
         file_content = f.read()
     
-    regex = re.findall(r'"Body":.*?{[^{}]+}', file_content)
-    data = []
-    for line in regex:
-        data.append(line.replace('"Body":',''))
-
-    schema = StructType([StructField("N", IntegerType(), nullable=True),
+    schema = StructType([StructField("DeviceId", IntegerType(), nullable=True),
+                         StructField("N", IntegerType(), nullable=True),
                          StructField("P", IntegerType(), nullable=True),
                          StructField("K", IntegerType(), nullable=True),
                          StructField("temp", DoubleType(), nullable=True),
@@ -45,15 +40,14 @@ def main():
                          StructField("batery", DoubleType(), nullable=True),
                          StructField("tema", StringType(), nullable=True)])
     
-    df = spark.createDataFrame(data, StringType())
+    df = spark.createDataFrame(file_content, StringType())
     df = df.select(from_json(df.value, schema).alias("data")).select("data.*")
     df = df.withColumn("Date", sf.lit(datetime.now().date()).cast(DateType()))
     
-    print(df)
-    print(df.show())
+    print(df.show(n=3))
 
     last_filie = last_filie.replace(".json", "")
-    df.write.csv(f"data-stagged/{last_filie}.csv", header=True, mode="overwrite")
+    df.write.csv(f"s3://stagged-soybean-gp4-sptech/{last_filie}.csv", header=True, mode="overwrite")
 
 if __name__ == "__main__":
     main()
