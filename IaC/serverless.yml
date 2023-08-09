@@ -29,7 +29,6 @@ functions:
 
 resources:
   Resources:
-
     s3BucketConsumed:
       Type: AWS::S3::Bucket
       Properties:
@@ -38,3 +37,156 @@ resources:
         Tags:
           - Key: Name
             Value: consumed-soybean-gp4-sptech
+
+    #REDE
+
+    myVPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: 10.0.0.0/24
+        EnableDnsSupport: true
+        Tags:
+          - Key: Name
+            Value: vpc-soybean-gp4-sptech
+
+    igwName:
+      Type: AWS::EC2::InternetGateway
+      Properties:
+        Tags:
+          - Key: Name
+            Value: igw-soyben-gp4-sptech
+    AttachGateway:
+      Type: AWS::EC2::VPCGatewayAttachment
+      Properties:
+        VpcId: !Ref myVPC
+        InternetGatewayId: !Ref igwName
+
+    mySubnet:
+      Type: AWS::EC2::Subnet
+      Properties:
+        MapPublicIpOnLaunch: true
+        AvailabilityZone: us-east-1a
+        VpcId: !Ref myVPC
+        CidrBlock: 10.0.0.0/24
+        Tags:
+          - Key: Name
+            Value: subnet-public-soyben-gp4-sptech
+
+    myRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref myVPC
+        Tags:
+          - Key: Name
+            Value: rt-public-soyben-gp4-sptech
+
+    routeTableAssocName:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref mySubnet
+        RouteTableId: !Ref myRouteTable
+
+    #SEGURANÇA
+    secGroupName:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: sg_public_soyben_gp4_sptech
+        GroupDescription: sg_public_soyben_gp4_sptech
+        VpcId: !Ref myVPC
+        SecurityGroupIngress:
+          - IpProtocol: "-1"
+            CidrIp: 0.0.0.0/0
+        SecurityGroupEgress:
+          - IpProtocol: "-1"
+            CidrIp: 0.0.0.0/0
+        Tags:
+          - Key: Name
+            Value: sg_public_soyben_gp4_sptech
+
+    # INSTANCIA DESENVOLVIMENTO COM SPARK
+
+    myEC2Instance:
+      Type: AWS::EC2::Instance
+      Properties:
+        IamInstanceProfile: LabInstanceProfile
+        KeyName: key-par-public
+        SubnetId: !Ref mySubnet
+        ImageId: ami-0f34c5ae932e6f0e4
+        InstanceType: t2.micro
+        SecurityGroupIds:
+          - !Ref secGroupName
+        # UserData: !Base64 |
+        #   !/bin/bash -ex
+        #   sudo yum -y update
+        #   sudo yum -y install python3
+        #   sudo yum -y install python3-pip
+        #   sudo pip3 install jupyter
+        #   sudo pip3 install pyspark
+
+        #   jupyter notebook --generate-config
+        #   echo "c.NotebookApp.password = 'sha1:2c998f379d18:be2e72d559114b6a74bc8d6f2d0176e152e688bf'" >> ~/.jupyter/jupyter_notebook_config.py
+
+        #   python3 -m ipykernel install --user
+
+        #   jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser
+        Tags:
+          - Key: Name
+            Value: instance-soybean-dev-gp4-sptech
+
+    #ALERTA (SNS)
+    MySNSTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        KmsMasterKeyId: 6e41aefa-4e37-45d7-bb94-625bfbf8b1b8
+        Tags:
+          - Key: Name
+            Value: sns-topic-alert-email
+        DisplayName: sns-topic-alert-email
+
+    MySNSSubscriptionEdu:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: eduardo.oliveira@sptech.school
+    
+    MySNSSubscriptionRenan:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: renan.lima@sptech.school
+    MySNSSubscriptionJeremy:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: jeremy.freitas@sptech.school
+    MySNSSubscriptionGabriel:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: gabriel.pedrosa@sptech.school
+    MySNSSubscriptionEnan:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: enan.oliveira@sptech.school
+    MySNSSubscriptionGarcez:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        Protocol: email
+        TopicArn:
+          Ref: MySNSTopic
+        Endpoint: rodrigo.hermann@sptech.school
+
+#Secret manager
+
+    
