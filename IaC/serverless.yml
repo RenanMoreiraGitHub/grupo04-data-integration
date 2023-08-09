@@ -8,7 +8,7 @@ provider:
 
 functions:
   rawToStagedLambda:
-    handler: raw_to_staged/app.lambda_handler
+    handler: 181076026206.dkr.ecr.us-east-1.amazonaws.com/raw:latest
     timeout: 30
     name: raw_to_staged_lambda
     role: arn:aws:iam::181076026206:role/LabRole
@@ -18,7 +18,7 @@ functions:
           event: s3:ObjectCreated:*
 
   stagedToConsumedLambda:
-    handler: staged_to_consumed/app.lambda_handler
+    handler: 181076026206.dkr.ecr.us-east-1.amazonaws.com/staged:latest
     timeout: 30
     name: staged_to_consumed_lambda
     role: arn:aws:iam::181076026206:role/LabRole
