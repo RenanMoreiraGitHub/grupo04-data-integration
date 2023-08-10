@@ -38,8 +38,8 @@ RUN echo "#!/usr/bin/env bash" > $SPARK_HOME/bin/spark-class
 RUN echo 'exec /usr/java/amazon-corretto-*.1-linux-x64/bin/java -cp /usr/local/lib/python3.8/site-packages/pyspark/conf/:/usr/local/lib/python3.8/site-packages/pyspark/jars/* -Xmx10g "$@"' >> $SPARK_HOME/bin/spark-class 
 RUN chmod -R 777 $SPARK_HOME/bin/spark-class 
 
-COPY IaC/jars/* ${SPARK_HOME}/jars/ 
-COPY IaC/requeriments.txt /opt/requirements.txt
+COPY jars/* ${SPARK_HOME}/jars/ 
+COPY requirements.txt /opt/requirements.txt
 
 ################################################################################################
 COPY . /opt/app
