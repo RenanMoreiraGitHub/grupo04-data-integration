@@ -39,6 +39,5 @@ class MysqlConnection:
         return df
 
     def disconnect(self) -> None:
-        info(f'Disconnecting database...')
+        info(f'Disconnecting from {self.HOST}...')
         self.engine.dispose()
-        info(f'Disconnected database sucessfully!')
