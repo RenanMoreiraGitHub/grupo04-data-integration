@@ -11,12 +11,24 @@ provider:
 
 resources:
   Resources:
-
-    LambdaRaw: 
+    #rds
+    MyDBInstance:
+      Type: "AWS::RDS::DBInstance"
+      Properties:
+        AllocatedStorage: 20
+        DBInstanceClass: db.t3.medium
+        Engine: mysql
+        MasterUsername: soybean
+        MasterUserPassword: urubu100
+        Tags:
+          - Key: Name
+            Value: rds-soybean-gp4-sptech
+    #labda
+    LambdaRaw:
       Type: AWS::Lambda::Function
       Properties:
         FunctionName: lambda-raw-to-staged
-        Code: 
+        Code:
           ImageUri: 181076026206.dkr.ecr.us-east-1.amazonaws.com/soybean-raw:latest
         PackageType: Image
         Role: arn:aws:iam::181076026206:role/LabRole
@@ -25,11 +37,11 @@ resources:
           - Key: Name
             Value: lambda-raw-to-staged
 
-    LambdaStaged: 
+    LambdaStaged:
       Type: AWS::Lambda::Function
       Properties:
         FunctionName: lambda-staged-to-consumed
-        Code: 
+        Code:
           ImageUri: 181076026206.dkr.ecr.us-east-1.amazonaws.com/soybean-staged:latest
         PackageType: Image
         Role: arn:aws:iam::181076026206:role/LabRole
@@ -37,8 +49,6 @@ resources:
         Tags:
           - Key: Name
             Value: lambda-staged-to-consumed
-
-
 
     LambdaECRaw:
       Type: AWS::ECR::Repository
@@ -61,7 +71,6 @@ resources:
           - Key: Name
             Value: lambda-raw-to-staged
 
-
     LambdaECStaged:
       Type: AWS::ECR::Repository
       Properties:
@@ -82,8 +91,6 @@ resources:
         Tags:
           - Key: Name
             Value: lambda-staged-to-consumed
-
-
 
     s3BucketStaged:
       Type: AWS::S3::Bucket

@@ -76,6 +76,7 @@ def simulate_data():
             "capacity": capacity,
             "collected": collected,
             "humidity_grain": humidity_grain,
+            "batery": bpm.batery,
             "data_hora": data_hora
         }
         
