@@ -198,20 +198,6 @@ resources:
         InstanceType: t2.micro
         SecurityGroupIds:
           - !Ref secGroupName
-        # UserData: !Base64 |
-        #   !/bin/bash -ex
-        #   sudo yum -y update
-        #   sudo yum -y install python3
-        #   sudo yum -y install python3-pip
-        #   sudo pip3 install jupyter
-        #   sudo pip3 install pyspark
-
-        #   jupyter notebook --generate-config
-        #   echo "c.NotebookApp.password = 'sha1:2c998f379d18:be2e72d559114b6a74bc8d6f2d0176e152e688bf'" >> ~/.jupyter/jupyter_notebook_config.py
-
-        #   python3 -m ipykernel install --user
-
-        #   jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser
         Tags:
           - Key: Name
             Value: instance-soybean-dev-gp4-sptech
