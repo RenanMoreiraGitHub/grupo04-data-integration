@@ -1,3 +1,4 @@
+import random
 import time
 import json
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
@@ -36,33 +37,37 @@ dht = DHT11()
 tcrt = TCRT5000()
 umigrain = Umigrain()
 
-def simulate_data():
 
+def simulate_data():
     temperature_mean = bpm.generate_temperature_mean()
     pressure_mean = bpm.generate_pressure_mean()
     air_speed_mean = anemometro.generate_speed_air_mean()
 
     count = 60
-    while bpm.get_batery() > 0 and anemometro.get_batery() > 0 and npk.get_batery() > 0\
-      and dht.get_batery() > 0 and tcrt.get_batery() > 0:
-        
+    while (
+        bpm.get_batery() > 0
+        and anemometro.get_batery() > 0
+        and npk.get_batery() > 0
+        and dht.get_batery() > 0
+        and tcrt.get_batery() > 0
+    ):
         data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if count < 1:
-            #after 60 times change the mean randomly
+            # after 60 times change the mean randomly
             temperature_mean = bpm.generate_temperature_mean()
             pressure_mean = bpm.generate_pressure_mean()
             air_speed_mean = anemometro.generate_speed_air_mean()
             count = 60
-        
+
         temperature = bpm.simulate_temperature(temperature_mean)
         pressure = bpm.simulate_pressure(pressure_mean)
         air_speed = anemometro.simulate_speed_air(air_speed_mean)
         n, p, k = npk.simulate_npk()
-        humidity =  dht.simulate_humidity()
+        humidity = dht.simulate_humidity()
         capacity = tcrt.simulate_silo_capacity()
         collected = tcrt.simulate_soybeans_collected()
         humidity_grain = umigrain.simulate_humidity()
-
+        setor = random.randint(1, 4)
         data = {
             "device_id": client_id,
             "device_name": "soybean-device",
@@ -76,10 +81,11 @@ def simulate_data():
             "capacity": capacity,
             "collected": collected,
             "humidity_grain": humidity_grain,
+            "setor": setor,
             "batery": bpm.batery,
-            "data_hora": data_hora
+            "data_hora": data_hora,
         }
-        
+
         payload = json.dumps(data)
         topic = "soybean-device"  # Replace with your topic name
 
@@ -87,6 +93,7 @@ def simulate_data():
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
         time.sleep(5)
+
 
 try:
     while True:
