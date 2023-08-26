@@ -6,9 +6,6 @@ provider:
   name: aws
   runtime: python3.9
 
-#raw-soybean-gp4-sptech
-#stagged-soybean-gp4-sptech
-
 resources:
   Resources:
     #rds
@@ -111,7 +108,6 @@ resources:
             Value: consumed-soybean-gp4-sptech
 
     #REDE
-
     myVPC:
       Type: AWS::EC2::VPC
       Properties:
@@ -255,4 +251,3 @@ resources:
         TopicArn:
           Ref: MySNSTopic
         Endpoint: rodrigo.hermann@sptech.school
-#ecr
