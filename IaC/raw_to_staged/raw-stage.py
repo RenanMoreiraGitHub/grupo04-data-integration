@@ -6,7 +6,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType
 
 
-BUCKET = 'raw-soybean-grp4-sptech'
+BUCKET = 'raw-soybean-gp4-sptech'
 
 def main():
     chave_id = boto3.session.Session().get_credentials().access_key
@@ -70,7 +70,7 @@ def main():
     print(df.show(n=3))
        
     df = df.coalesce(1)
-    df.write.parquet(f"s3a://stagged-soybean-grp4-sptech/sensors/", mode="overwrite")
+    df.write.parquet(f"s3a://stagged-soybean-gp4-sptech/sensors/", mode="overwrite")
     
 if __name__ == "__main__":
     main()
