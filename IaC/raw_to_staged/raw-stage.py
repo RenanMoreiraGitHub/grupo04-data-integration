@@ -1,3 +1,4 @@
+import os
 import boto3
 import json
 import src.utils.utils as utils
@@ -5,14 +6,27 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType
 
 
-BUCKET = 'raw-soybean-gp4-sptech'
+BUCKET = 'raw-soybean-grp4-sptech'
 
 def main():
-    spark = SparkSession.builder.appName('raw_stage')\
-            .config("spark.sql.files.ignoreCorruptFiles", "true")\
-            .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
-            .enableHiveSupport()\
-            .getOrCreate()
+    chave_id = boto3.session.Session().get_credentials().access_key
+    secret_id = boto3.session.Session().get_credentials().secret_key
+    token = boto3.session.Session().get_credentials().token
+
+    os.environ["AWS_ACCESS_KEY_ID"]=chave_id
+    os.environ["AWS_SECRET_ACCESS_KEY"]=secret_id
+    os.environ["AWS_SESSION_TOKEN"]=token
+    os.environ["AWS_DEFAULT_REGION"]='us-east-1'
+
+    spark = SparkSession.builder.appName('app_name') \
+        .config("spark.jars.packages", "com.amazonaws:aws-java-sdk-bundle:1.11.271,org.apache.hadoop:hadoop-aws:3.1.2") \
+        .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
+        .config("fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.TemporaryAWSCredentialsProvider") \
+        .config("fs.s3a.access.key", chave_id)\
+        .config("fs.s3a.secret.key", secret_id)\
+        .config("fs.s3a.secret.session.token", token)\
+        .enableHiveSupport() \
+        .getOrCreate()
     
     last_filie = utils.get_recent_file(BUCKET)
         
@@ -25,9 +39,7 @@ def main():
 
     with open(f'./{last_filie}', "r") as f:
         file_content = f.read()
-    
-
-    
+        
     file_content = json.loads(file_content)
 
     schema = StructType([StructField("device_id", StringType(), nullable=True),
@@ -57,8 +69,8 @@ def main():
     df = spark.createDataFrame(rdd, schema=schema)    
     print(df.show(n=3))
        
-    last_filie = last_filie.replace(".json", "")
-    df.write.csv(f"s3a://stagged-soybean-gp4-sptech/{last_filie}.csv", header=True, mode="overwrite")
+    df = df.coalesce(1)
+    df.write.parquet(f"s3a://stagged-soybean-grp4-sptech/sensors/", mode="overwrite")
     
 if __name__ == "__main__":
     main()
