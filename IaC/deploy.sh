@@ -7,19 +7,19 @@ if [ $? -ne 0 ]; then
 
 else
   echo "Deploying labdas image..."
-  aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 887408025590.dkr.ecr.us-east-1.amazonaws.com
+  aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 181076026206.dkr.ecr.us-east-1.amazonaws.com
   
   echo "Deploying raw-to-staged..."
   cd raw_to_staged
-  docker build -t test-raw .
-  docker tag test-raw:latest 887408025590.dkr.ecr.us-east-1.amazonaws.com/test-raw:latest
-  docker push 887408025590.dkr.ecr.us-east-1.amazonaws.com/test-raw:latest
+  docker build -t soybean-raw .
+  docker tag soybean-raw:latest 181076026206.dkr.ecr.us-east-1.amazonaws.com/soybean-raw:latest
+  docker push 181076026206.dkr.ecr.us-east-1.amazonaws.com/soybean-raw:latest
   cd ..
   
   echo "Deploying staged-to-consume..."
   cd staged_to_consumed
-  docker build -t test-staged .
-  docker tag test-staged:latest 887408025590.dkr.ecr.us-east-1.amazonaws.com/test-staged:latest
-  docker push 887408025590.dkr.ecr.us-east-1.amazonaws.com/test-staged:latest
+  docker build -t soybean-staged .
+  docker tag soybean-staged:latest 181076026206.dkr.ecr.us-east-1.amazonaws.com/soybean-staged:latest
+  docker push 181076026206.dkr.ecr.us-east-1.amazonaws.com/soybean-staged:latest
 
 fi

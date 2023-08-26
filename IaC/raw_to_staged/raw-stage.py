@@ -1,54 +1,79 @@
+import os
 import boto3
-import re
+import json
 import src.utils.utils as utils
-import pyspark.sql.functions as sf
-from datetime import datetime
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, DateType
-from pyspark.sql.functions import from_json
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType
+
 
 BUCKET = 'raw-soybean-gp4-sptech'
 
 def main():
-    spark = SparkSession.builder.appName('raw_stage')\
-            .config("spark.sql.files.ignoreCorruptFiles", "true")\
-            .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
-            .enableHiveSupport()\
-            .getOrCreate()
+    chave_id = boto3.session.Session().get_credentials().access_key
+    secret_id = boto3.session.Session().get_credentials().secret_key
+    token = boto3.session.Session().get_credentials().token
+
+    os.environ["AWS_ACCESS_KEY_ID"]=chave_id
+    os.environ["AWS_SECRET_ACCESS_KEY"]=secret_id
+    os.environ["AWS_SESSION_TOKEN"]=token
+    os.environ["AWS_DEFAULT_REGION"]='us-east-1'
+
+    spark = SparkSession.builder.appName('app_name') \
+        .config("spark.jars.packages", "com.amazonaws:aws-java-sdk-bundle:1.11.271,org.apache.hadoop:hadoop-aws:3.1.2") \
+        .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
+        .config("fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.TemporaryAWSCredentialsProvider") \
+        .config("fs.s3a.access.key", chave_id)\
+        .config("fs.s3a.secret.key", secret_id)\
+        .config("fs.s3a.secret.session.token", token)\
+        .enableHiveSupport() \
+        .getOrCreate()
     
     last_filie = utils.get_recent_file(BUCKET)
+        
     s3 = boto3.resource('s3')
     try:
-        s3.Bucket(BUCKET).download_file(last_filie, last_filie)
-    except:
+       s3.meta.client.download_file(BUCKET, last_filie,last_filie)
+    except Exception as e:
+        print(e)
         raise "ERROR GETTING OBJECT."
 
     with open(f'./{last_filie}', "r") as f:
         file_content = f.read()
-    
-    schema = StructType([StructField("DeviceId", IntegerType(), nullable=True),
-                         StructField("N", IntegerType(), nullable=True),
-                         StructField("P", IntegerType(), nullable=True),
-                         StructField("K", IntegerType(), nullable=True),
-                         StructField("temp", DoubleType(), nullable=True),
-                         StructField("humi", DoubleType(), nullable=True),
-                         StructField("var", DoubleType(), nullable=True),
-                         StructField("press", DoubleType(), nullable=True),
-                         StructField("caps", IntegerType(), nullable=True),
-                         StructField("qtdg", IntegerType(), nullable=True),
-                         StructField("umig", DoubleType(), nullable=True),
+        
+    file_content = json.loads(file_content)
+
+    schema = StructType([StructField("device_id", StringType(), nullable=True),
+                         StructField("device_name", StringType(), nullable=True),
+                         StructField("temperature", DoubleType(), nullable=True),
+                         StructField("pressure", DoubleType(), nullable=True),
+                         StructField("air-speed", DoubleType(), nullable=True),
+                         StructField("n", IntegerType(), nullable=True),
+                         StructField("p", IntegerType(), nullable=True),
+                         StructField("k", IntegerType(), nullable=True),
+                         StructField("humidity", DoubleType(), nullable=True),
+                         StructField("capacity", DoubleType(), nullable=True),
+                         StructField("collected", DoubleType(), nullable=True),
+                         StructField("humidity_grain", DoubleType(), nullable=True),
                          StructField("batery", DoubleType(), nullable=True),
-                         StructField("tema", StringType(), nullable=True)])
+                         StructField("setor", StringType(), nullable=True),
+                         StructField("data_hora", StringType(), nullable=True)])
     
-    df = spark.createDataFrame(file_content, StringType())
-    df = df.select(from_json(df.value, schema).alias("data")).select("data.*")
-    df = df.withColumn("Date", sf.lit(datetime.now().date()).cast(DateType()))
-    
+    data = [(file_content['device_id'], file_content['device_name'], 
+             file_content['temperature'], file_content['pressure'], 
+             file_content['air-speed'], file_content['n'], file_content['p'], 
+             file_content['k'], file_content['humidity'], file_content['capacity'], 
+             file_content['collected'], file_content['humidity_grain'],
+             file_content['batery'], file_content['setor'], file_content['data_hora'])]
+
+    rdd = spark.sparkContext.parallelize(data)
+
+    df = spark.createDataFrame(rdd, schema=schema)    
     print(df.show(n=3))
-
-    last_filie = last_filie.replace(".json", "")
-    df.write.csv(f"s3://stagged-soybean-gp4-sptech/{last_filie}.csv", header=True, mode="overwrite")
-
+       
+    df = df.coalesce(1)
+    df.write.parquet(f"s3a://stagged-soybean-gp4-sptech/sensors/", mode="overwrite")
+    
 if __name__ == "__main__":
     main()
     
+

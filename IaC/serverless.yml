@@ -6,29 +6,98 @@ provider:
   name: aws
   runtime: python3.9
 
-functions:
-  rawToStagedLambda:
-    handler: 181076026206.dkr.ecr.us-east-1.amazonaws.com/raw:latest
-    timeout: 30
-    name: raw_to_staged_lambda
-    role: arn:aws:iam::181076026206:role/LabRole
-    events:
-      - s3:
-          bucket: raw-soybean-gp4-sptech
-          event: s3:ObjectCreated:*
-
-  stagedToConsumedLambda:
-    handler: 181076026206.dkr.ecr.us-east-1.amazonaws.com/staged:latest
-    timeout: 30
-    name: staged_to_consumed_lambda
-    role: arn:aws:iam::181076026206:role/LabRole
-    events:
-      - s3:
-          bucket: stagged-soybean-gp4-sptech
-          event: s3:ObjectCreated:*
-
 resources:
   Resources:
+    #rds
+    MyDBInstance:
+      Type: "AWS::RDS::DBInstance"
+      Properties:
+        AllocatedStorage: 20
+        DBInstanceClass: db.t3.medium
+        Engine: mysql
+        MasterUsername: soybean
+        MasterUserPassword: urubu100
+        Tags:
+          - Key: Name
+            Value: rds-soybean-gp4-sptech
+    #labda
+    LambdaRaw:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: lambda-raw-to-staged
+        Code:
+          ImageUri: 181076026206.dkr.ecr.us-east-1.amazonaws.com/soybean-raw:latest
+        PackageType: Image
+        Role: arn:aws:iam::181076026206:role/LabRole
+        Timeout: 300
+        Tags:
+          - Key: Name
+            Value: lambda-raw-to-staged
+
+    LambdaStaged:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: lambda-staged-to-consumed
+        Code:
+          ImageUri: 181076026206.dkr.ecr.us-east-1.amazonaws.com/soybean-staged:latest
+        PackageType: Image
+        Role: arn:aws:iam::181076026206:role/LabRole
+        Timeout: 300
+        Tags:
+          - Key: Name
+            Value: lambda-staged-to-consumed
+
+    LambdaECRaw:
+      Type: AWS::ECR::Repository
+      Properties:
+        ImageScanningConfiguration:
+          ScanOnPush: true
+        RepositoryName: soybean-raw
+        RepositoryPolicyText:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: ECRLambdaPolicy
+              Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - "ecr:BatchGetImage"
+                - "ecr:GetDownloadUrlForLayer"
+        Tags:
+          - Key: Name
+            Value: lambda-raw-to-staged
+
+    LambdaECStaged:
+      Type: AWS::ECR::Repository
+      Properties:
+        ImageScanningConfiguration:
+          ScanOnPush: true
+        RepositoryName: soybean-staged
+        RepositoryPolicyText:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: ECRLambdaPolicy
+              Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - "ecr:BatchGetImage"
+                - "ecr:GetDownloadUrlForLayer"
+        Tags:
+          - Key: Name
+            Value: lambda-staged-to-consumed
+
+    s3BucketStaged:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: Private
+        BucketName: stagged-soybean-gp4-sptech
+        Tags:
+          - Key: Name
+            Value: stagged-soybean-gp4-sptech
+
     s3BucketConsumed:
       Type: AWS::S3::Bucket
       Properties:
@@ -39,7 +108,6 @@ resources:
             Value: consumed-soybean-gp4-sptech
 
     #REDE
-
     myVPC:
       Type: AWS::EC2::VPC
       Properties:
@@ -104,6 +172,17 @@ resources:
             Value: sg_public_soyben_gp4_sptech
 
     # INSTANCIA DESENVOLVIMENTO COM SPARK
+    eipName:
+      Type: AWS::EC2::EIP
+      Properties:
+        Domain: !Ref myVPC
+        InstanceId: !Ref myEC2Instance
+
+    myEipAssociation:
+      Type: AWS::EC2::EIPAssociation
+      Properties:
+        EIP: !Ref eipName
+        InstanceId: !Ref myEC2Instance
 
     myEC2Instance:
       Type: AWS::EC2::Instance
@@ -115,20 +194,6 @@ resources:
         InstanceType: t2.micro
         SecurityGroupIds:
           - !Ref secGroupName
-        # UserData: !Base64 |
-        #   !/bin/bash -ex
-        #   sudo yum -y update
-        #   sudo yum -y install python3
-        #   sudo yum -y install python3-pip
-        #   sudo pip3 install jupyter
-        #   sudo pip3 install pyspark
-
-        #   jupyter notebook --generate-config
-        #   echo "c.NotebookApp.password = 'sha1:2c998f379d18:be2e72d559114b6a74bc8d6f2d0176e152e688bf'" >> ~/.jupyter/jupyter_notebook_config.py
-
-        #   python3 -m ipykernel install --user
-
-        #   jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser
         Tags:
           - Key: Name
             Value: instance-soybean-dev-gp4-sptech
@@ -144,49 +209,45 @@ resources:
         DisplayName: sns-topic-alert-email
 
     MySNSSubscriptionEdu:
-      Type: 'AWS::SNS::Subscription'
+      Type: "AWS::SNS::Subscription"
       Properties:
         Protocol: email
         TopicArn:
           Ref: MySNSTopic
         Endpoint: eduardo.oliveira@sptech.school
-    
+
     MySNSSubscriptionRenan:
-      Type: 'AWS::SNS::Subscription'
+      Type: "AWS::SNS::Subscription"
       Properties:
         Protocol: email
         TopicArn:
           Ref: MySNSTopic
         Endpoint: renan.lima@sptech.school
     MySNSSubscriptionJeremy:
-      Type: 'AWS::SNS::Subscription'
+      Type: "AWS::SNS::Subscription"
       Properties:
         Protocol: email
         TopicArn:
           Ref: MySNSTopic
         Endpoint: jeremy.freitas@sptech.school
     MySNSSubscriptionGabriel:
-      Type: 'AWS::SNS::Subscription'
+      Type: "AWS::SNS::Subscription"
       Properties:
         Protocol: email
         TopicArn:
           Ref: MySNSTopic
         Endpoint: gabriel.pedrosa@sptech.school
     MySNSSubscriptionEnan:
-      Type: 'AWS::SNS::Subscription'
+      Type: "AWS::SNS::Subscription"
       Properties:
         Protocol: email
         TopicArn:
           Ref: MySNSTopic
         Endpoint: enan.oliveira@sptech.school
     MySNSSubscriptionGarcez:
-      Type: 'AWS::SNS::Subscription'
+      Type: "AWS::SNS::Subscription"
       Properties:
         Protocol: email
         TopicArn:
           Ref: MySNSTopic
         Endpoint: rodrigo.hermann@sptech.school
-
-#Secret manager
-
-    
