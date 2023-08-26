@@ -55,14 +55,15 @@ def main():
                          StructField("collected", DoubleType(), nullable=True),
                          StructField("humidity_grain", DoubleType(), nullable=True),
                          StructField("batery", DoubleType(), nullable=True),
-                         StructField("setor", StringType(), nullable=True)])
+                         StructField("setor", StringType(), nullable=True),
+                         StructField("data_hora", StringType(), nullable=True)])
     
     data = [(file_content['device_id'], file_content['device_name'], 
              file_content['temperature'], file_content['pressure'], 
              file_content['air-speed'], file_content['n'], file_content['p'], 
              file_content['k'], file_content['humidity'], file_content['capacity'], 
              file_content['collected'], file_content['humidity_grain'],
-             file_content['batery'], file_content['setor'])]
+             file_content['batery'], file_content['setor'], file_content['data_hora'])]
 
     rdd = spark.sparkContext.parallelize(data)
 
