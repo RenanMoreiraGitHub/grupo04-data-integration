@@ -143,7 +143,7 @@ iframe {
 .txt2 {
   font-family: Poppins-Regular;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 8.5;
   color: #666666;
 }
 
@@ -206,6 +206,7 @@ iframe {
 [  ]*/
 .login100-form {
   width: 290px;
+  height: 400px;
 }
 
 .login100-form-title {
