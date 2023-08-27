@@ -33,6 +33,9 @@ app.post('/auth', async (req, res) => {
         const [results] = await connection.promise().query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password]);
 
         if (results.length > 0) {
+
+
+
             req.session.loggedin = true;
             req.session.username = username;
             res.redirect('/home');

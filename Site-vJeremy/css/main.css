@@ -149,6 +149,15 @@ iframe {
 
 
 /*//////////////////////////////////////////////////////////////////
+[ Authentication]*/
+
+.message-sender {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+
+/*//////////////////////////////////////////////////////////////////
 [ login ]*/
 
 .limiter {
@@ -228,6 +237,7 @@ iframe {
   width: 100%;
   z-index: 1;
   margin-bottom: 20px;
+  margin-top: 40px;
 }
 
 .input100 {
@@ -235,7 +245,6 @@ iframe {
   font-size: 15px;
   line-height: 1.5;
   color: #666666;
-
   display: block;
   width: 100%;
   background: #e6e6e6;
@@ -244,6 +253,10 @@ iframe {
   padding: 0 30px 0 68px;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
 
 /*------------------------------------------------------------------
 [ Focus ]*/
