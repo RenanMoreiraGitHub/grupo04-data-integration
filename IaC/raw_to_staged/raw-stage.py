@@ -1,10 +1,14 @@
 import os
 import boto3
 import json
-import src.utils.utils as utils
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType
 
+
+def get_recent_file(bucket_name):
+    s3 = boto3.client('s3')
+    arquivos = s3.list_objects_v2(Bucket=bucket_name)['Contents']
+    return max(arquivos, key=lambda x: x['LastModified'])['Key']
 
 BUCKET = 'raw-soybean-gp4-sptech'
 
@@ -28,7 +32,7 @@ def main():
         .enableHiveSupport() \
         .getOrCreate()
     
-    last_filie = utils.get_recent_file(BUCKET)
+    last_filie = get_recent_file(BUCKET)
         
     s3 = boto3.resource('s3')
     try:
