@@ -18,6 +18,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "static")));
@@ -35,7 +36,7 @@ app.post("/auth", async (req, res) => {
     if (results.length > 0) {
       req.session.loggedin = true;
       req.session.username = username;
-      res.redirect("/register");
+      res.redirect("/aaa");
     } else {
       res.send('Incorrect Username and/or Password!');
     }
