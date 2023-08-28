@@ -2,16 +2,19 @@ const mysql = require("mysql2");
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-
+const nodemailer = require('nodemailer');
 const app = express();
 const PORT = 3000;
+const storage = require('node-sessionstorage')
 
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'urubu100',
-    database: 'nodelogin'
+    password: '*********',
+    database: 'testeBack'
 });
+
+var code = generateCode();
 
 app.use(session({
     secret: 'secret',
@@ -33,11 +36,26 @@ app.post('/auth', async (req, res) => {
         const [results] = await connection.promise().query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password]);
 
         if (results.length > 0) {
-
-
-
+            const resultUpdate = await connection.promise().query('UPDATE accounts SET code = ?  where username = ? and password = ?', [code, username, password])
+            sendEmail();
             req.session.loggedin = true;
             req.session.username = username;
+            req.session.password = password;
+            res.redirect('/authentication');
+        } else {
+            res.send('Incorrect Username and/or Password!');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
+});
+
+app.post('/update', async (req, res) => {
+    try {
+        const [results] = await connection.promise().query('SELECT code FROM accounts WHERE username = ? AND password = ?', [email, senha]);
+        
+        if (results.length > 0) {
             res.redirect('/home');
         } else {
             res.send('Incorrect Username and/or Password!');
@@ -45,6 +63,35 @@ app.post('/auth', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
+    }
+});
+
+async function sendEmail() { 
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.office365.com',
+        port: 587,
+        secure: false, // use SSL
+        auth: {
+            user: 'renan.lima@bandtec.com.br',
+            pass: '**************'   
+        }
+        })
+    
+    const info= await transporter.sendMail({ 
+        from: "renan.lima@bandtec.com.br", 
+        to: `teste@gmail.com`, 
+        subject: "Código de auntenticação recebido", 
+        text: `Insira o código ${code} para validar o seu acesso na plataforma SoyBean`,
+    })
+
+    console.log("Message sent: %s", info.messageId)
+}
+
+app.get('/authentication', (req, res) => {
+    if (req.session.loggedin) {
+        res.sendFile(path.join(__dirname, 'authentication.html'));
+    } else {
+        res.send('Please login to view this page!');
     }
 });
 
@@ -75,6 +122,12 @@ app.post('/register', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
+function generateCode(){
+    return Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
+}
+
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
