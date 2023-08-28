@@ -1,6 +1,8 @@
 import pandas as pd
 from os import getenv
 from dotenv import load_dotenv; load_dotenv()
+from pathlib import Path
+from os.path import join
 
 from mysql_connection import MysqlConnection
 
@@ -23,6 +25,10 @@ df['date'] = pd.to_datetime(df['date'], format='%d/%m/%Y %H:%M:%S')
 df.drop(['Data', 'Hora'], axis = 1, inplace = True)
 
 print(df.head())
+
+downloads_path = str(join(Path.home(), "Downloads"))
+print(f'Downloading dataset temperature_brazil to {downloads_path}...')
+df.to_excel(join(downloads_path, 'temperature_brazil.xlsx'), index=True)
 
 mysql_db = MysqlConnection(
     getenv('USER_BD'), getenv('PASS_BD'), getenv('HOST_BD'))

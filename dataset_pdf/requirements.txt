@@ -5,3 +5,4 @@ SQLAlchemy==2.0.20
 SQLAlchemy-Utils==0.41.1
 pymysql==1.1.0
 python-dotenv==1.0.0
+openpyxl==3.1.2
