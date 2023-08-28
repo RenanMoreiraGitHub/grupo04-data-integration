@@ -4,13 +4,13 @@ import json
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType
 
+BUCKET = 'raw-soybean-gp4-sptech'
 
 def get_recent_file(bucket_name):
     s3 = boto3.client('s3')
     arquivos = s3.list_objects_v2(Bucket=bucket_name)['Contents']
     return max(arquivos, key=lambda x: x['LastModified'])['Key']
 
-BUCKET = 'raw-soybean-gp4-sptech'
 
 def main():
     chave_id = boto3.session.Session().get_credentials().access_key
