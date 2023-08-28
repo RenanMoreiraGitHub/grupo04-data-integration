@@ -6,6 +6,25 @@ provider:
   name: aws
   runtime: python3.9
 
+function:
+  lambda1:
+    handler: raw-staged.main
+    name: raw-to-stage
+    memorySize: 600
+    timeout: 900
+    role: LambdaRole
+    layers:
+      - arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:1
+  
+  lambda2:
+    handler: staged-consumed.main
+    name: stage-to-consumed
+    memorySize: 600
+    timeout: 900
+    role: LambdaRole
+    layers:
+      - arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:1
+  
 resources:
   Resources:
     #rds
@@ -20,78 +39,6 @@ resources:
         Tags:
           - Key: Name
             Value: rds-soybean-gp4-sptech
-    #labda
-    LambdaRaw:
-      Type: AWS::Lambda::Function
-      Properties:
-        FunctionName: lambda-raw-to-staged
-        Code:
-          ZipFile: |
-            #!/usr/bin/env python3
-            import json
-        PackageType: Image
-        Role: arn:aws:iam::181076026206:role/LabRole
-        Timeout: 300
-        Tags:
-          - Key: Name
-            Value: lambda-raw-to-staged
-
-    LambdaStaged:
-      Type: AWS::Lambda::Function
-      Properties:
-        FunctionName: lambda-staged-to-consumed
-        Code:
-          ZipFile: |
-            #!/usr/bin/env python3
-            import json
-        PackageType: Image
-        Role: arn:aws:iam::181076026206:role/LabRole
-        Timeout: 300
-        Tags:
-          - Key: Name
-            Value: lambda-staged-to-consumed
-
-    LambdaECRaw:
-      Type: AWS::ECR::Repository
-      Properties:
-        ImageScanningConfiguration:
-          ScanOnPush: true
-        RepositoryName: soybean-raw
-        RepositoryPolicyText:
-          Version: "2012-10-17"
-          Statement:
-            - Sid: ECRLambdaPolicy
-              Effect: Allow
-              Principal:
-                Service:
-                  - lambda.amazonaws.com
-              Action:
-                - "ecr:BatchGetImage"
-                - "ecr:GetDownloadUrlForLayer"
-        Tags:
-          - Key: Name
-            Value: lambda-raw-to-staged
-
-    LambdaECStaged:
-      Type: AWS::ECR::Repository
-      Properties:
-        ImageScanningConfiguration:
-          ScanOnPush: true
-        RepositoryName: soybean-staged
-        RepositoryPolicyText:
-          Version: "2012-10-17"
-          Statement:
-            - Sid: ECRLambdaPolicy
-              Effect: Allow
-              Principal:
-                Service:
-                  - lambda.amazonaws.com
-              Action:
-                - "ecr:BatchGetImage"
-                - "ecr:GetDownloadUrlForLayer"
-        Tags:
-          - Key: Name
-            Value: lambda-staged-to-consumed
 
     s3BucketStaged:
       Type: AWS::S3::Bucket
