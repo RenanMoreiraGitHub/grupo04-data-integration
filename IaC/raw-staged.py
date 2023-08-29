@@ -3,7 +3,7 @@ import json
 import pandas as pd
 import awswrangler as wr
 
-BUCKET = 'raw-soybean-grp4-sptech'
+BUCKET = 'raw-soybean-gp4-sptech'
 
 def get_recent_file(bucket_name):
     s3 = boto3.client('s3')
@@ -25,7 +25,7 @@ def main(event, context):
 
     wr.s3.to_parquet(
         df=df,
-        path="s3://stagged-soybean-grp4-sptech/sensors/", 
-        mode="overwrite",
+        path="s3://stagged-soybean-gp4-sptech/sensors/", 
+        mode="append",
         dataset=True
     )
