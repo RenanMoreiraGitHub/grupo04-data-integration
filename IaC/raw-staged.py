@@ -3,26 +3,20 @@ import json
 import pandas as pd
 import awswrangler as wr
 
-BUCKET = 'raw-soybean-gp4-sptech'
+BUCKET = 'raw-soybean-grp4-sptech'
 
 def get_recent_file(bucket_name):
     s3 = boto3.client('s3')
     arquivos = s3.list_objects_v2(Bucket=bucket_name)['Contents']
     return max(arquivos, key=lambda x: x['LastModified'])['Key']
 
-def main():
+def main(event, context):
     print('INFO: Getting recent files')
     last_file = get_recent_file(BUCKET)
         
-    s3 = boto3.resource('s3')
-    try:
-       s3.meta.client.download_file(BUCKET, last_file,last_file)
-    except Exception as e:
-        print(e)
-        raise "ERROR GETTING OBJECT."
-    
-    with open(f'./{last_file}', "r") as f:
-        file_content = f.read()
+    s3 = boto3.client('s3')
+    response = s3.get_object(Bucket=BUCKET, Key=last_file)
+    file_content = response['Body'].read().decode('utf-8')
         
     print('INFO: Creating dataframe')
     file_content = json.loads(file_content)
@@ -31,9 +25,7 @@ def main():
 
     wr.s3.to_parquet(
         df=df,
-        path="s3a://stagged-soybean-gp4-sptech/sensors/", 
-        mode="overwrite"
+        path="s3://stagged-soybean-grp4-sptech/sensors/", 
+        mode="overwrite",
+        dataset=True
     )
-
-if __name__ == '__main__':
-    main()

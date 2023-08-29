@@ -34,15 +34,9 @@ def main():
     
     last_filie = get_recent_file(BUCKET)
         
-    s3 = boto3.resource('s3')
-    try:
-       s3.meta.client.download_file(BUCKET, last_filie,last_filie)
-    except Exception as e:
-        print(e)
-        raise "ERROR GETTING OBJECT."
-
-    with open(f'./{last_filie}', "r") as f:
-        file_content = f.read()
+    s3 = boto3.client('s3')
+    response = s3.get_object(Bucket=BUCKET, Key=last_filie)
+    file_content = response['Body'].read().decode('utf-8')
         
     file_content = json.loads(file_content)
 
