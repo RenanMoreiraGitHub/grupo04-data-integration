@@ -7,10 +7,10 @@ const app = express();
 const PORT = 3000;
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
+    host: 'aws-python-project-dev-mydbinstance-6ffzmbct02f9.clstgtmhjsoh.us-east-1.rds.amazonaws.com',
+    user: 'soybean',
     password: 'urubu100',
-    database: 'nodelogin'
+    database: 'soybean'
 });
 
 app.use(session({
