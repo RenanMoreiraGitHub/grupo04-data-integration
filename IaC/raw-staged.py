@@ -2,6 +2,7 @@ import boto3
 import json
 import pandas as pd
 import awswrangler as wr
+from mysql_connection import MysqlConnection
 
 BUCKET = 'raw-soybean-gp4-sptech'
 
@@ -21,6 +22,7 @@ def main(event, context):
     print('INFO: Creating dataframe')
     file_content = json.loads(file_content)
     df = pd.DataFrame([file_content])
+    df = df.round(2)
     print(df.head(n=3))
 
     wr.s3.to_parquet(
@@ -29,3 +31,10 @@ def main(event, context):
         mode="append",
         dataset=True
     )
+
+    mysql_db = MysqlConnection(
+        'soybean', 'urubu100', 'aws-python-project-dev-mydbinstance-6ffzmbct02f9.clstgtmhjsoh.us-east-1.rds.amazonaws.com')
+    mysql_db.connect()
+    mysql_db.insert_dataframe(df, 'sensores', 'soybean', index=False)
+    mysql_db.disconnect()
+
