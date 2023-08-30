@@ -5,13 +5,14 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const app = express();
 const PORT = 3000;
-const storage = require('node-sessionstorage')
+const LocalStorage = require('node-localstorage').LocalStorage;
+const localStorage = new LocalStorage('./scratch');
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '*********',
-    database: 'testeBack'
+    host: 'aws-python-project-dev-mydbinstance-6ffzmbct02f9.clstgtmhjsoh.us-east-1.rds.amazonaws.com',
+    user: 'soybean',
+    password: 'urubu100',
+    database: 'soybean'
 });
 
 var code = generateCode();
@@ -30,21 +31,37 @@ app.get('/', (req, res) => {
 });
 
 app.post('/auth', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, Empresa, Usuario } = req.body;
 
     try {
-        const [results] = await connection.promise().query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password]);
+        console.log(req.body)
 
+        if(Empresa == 'true'){
+            const [results] = await connection.promise().query('SELECT * FROM empresa WHERE email = ? AND password = ?', [username, password]);
+            if(results.length > 0) {
+                req.session.loggedin = true;
+                req.session.username = username;
+                req.session.password = password;
+                return res.redirect('/home');
+            } else {
+                return res.send('Incorrect Username and/or Password!');
+            }
+        }
+        
+        const [results] = await connection.promise().query('SELECT * FROM usuario WHERE login = ? AND password = ?', [username, password]);
         if (results.length > 0) {
-            const resultUpdate = await connection.promise().query('UPDATE accounts SET code = ?  where username = ? and password = ?', [code, username, password])
+            const resultUpdate = await connection.promise().query('UPDATE usuario SET code = ?  where login = ? and password = ?', [code, username, password])
             sendEmail();
             req.session.loggedin = true;
             req.session.username = username;
             req.session.password = password;
+            localStorage.setItem('email', username);
+            localStorage.setItem('senha', password);
             res.redirect('/authentication');
         } else {
             res.send('Incorrect Username and/or Password!');
         }
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
@@ -53,7 +70,9 @@ app.post('/auth', async (req, res) => {
 
 app.post('/update', async (req, res) => {
     try {
-        const [results] = await connection.promise().query('SELECT code FROM accounts WHERE username = ? AND password = ?', [email, senha]);
+        const email = localStorage.getItem('email');
+        const senha = localStorage.getItem('senha');
+        const [results] = await connection.promise().query('SELECT code FROM usuario WHERE login = ? AND password = ?', [email, senha]);
         
         if (results.length > 0) {
             res.redirect('/home');
@@ -73,14 +92,14 @@ async function sendEmail() {
         secure: false, // use SSL
         auth: {
             user: 'renan.lima@bandtec.com.br',
-            pass: '**************'   
+            pass: '**********'   
         }
         })
     
     const info= await transporter.sendMail({ 
         from: "renan.lima@bandtec.com.br", 
-        to: `teste@gmail.com`, 
-        subject: "Código de auntenticação recebido", 
+        to: `${localStorage.getItem('email')}`, 
+        subject: "Código de autenticação recebido", 
         text: `Insira o código ${code} para validar o seu acesso na plataforma SoyBean`,
     })
 
@@ -126,8 +145,6 @@ app.post('/register', async (req, res) => {
 function generateCode(){
     return Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
 }
-
-
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

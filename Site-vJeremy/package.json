@@ -12,7 +12,6 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.6.0",
     "node-localstorage": "^3.0.5",
-    "node-sessionstorage": "^1.0.0",
     "nodemailer": "^6.9.4"
   },
   "author": "",
