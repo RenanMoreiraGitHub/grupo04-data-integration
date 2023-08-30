@@ -92,7 +92,7 @@ def simulate_data():
         # Publish the temperature data
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
-        time.sleep(5)
+        time.sleep(1)
 
 
 try:
