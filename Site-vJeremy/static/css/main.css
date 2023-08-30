@@ -191,6 +191,22 @@ iframe {
   padding: 100px 130px 100px 95px;
 }
 
+.wrap-login100-proprietario {
+  width: 760px;
+  height: 1150px;
+  background: #fff;
+  border-radius: 10px;
+
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 70px 100px 70px 65px;
+}
+
 /*------------------------------------------------------------------
 [  ]*/
 .login100-pic {
@@ -215,6 +231,19 @@ iframe {
   color: #333333;
   line-height: 1.2;
   text-align: center;
+
+  width: 100%;
+  display: block;
+  padding-bottom: 54px;
+  padding-top: 10px;
+}
+
+.login100-form-title-tipo-acesso {
+  font-family: Poppins-Bold;
+  font-size: 18px;
+  color: #333333;
+  line-height: 1.2;
+  text-align: start;
 
   width: 100%;
   display: block;
