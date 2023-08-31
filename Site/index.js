@@ -31,8 +31,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/auth', async (req, res) => {
-    const { username, password, Empresa, Usuario } = req.body;
-
+    const { username, password, Empresa } = req.body;
+    var access_type
     try {
         console.log(req.body)
 
@@ -42,7 +42,7 @@ app.post('/auth', async (req, res) => {
                 req.session.loggedin = true;
                 req.session.username = username;
                 req.session.password = password;
-                return res.redirect('/home');
+                return res.redirect('/empresa');
             } else {
                 return res.send('Incorrect Username and/or Password!');
             }
@@ -55,8 +55,10 @@ app.post('/auth', async (req, res) => {
             req.session.loggedin = true;
             req.session.username = username;
             req.session.password = password;
+            access_type = results[0].access_type;
             localStorage.setItem('email', username);
             localStorage.setItem('senha', password);
+            localStorage.setItem('access_type', access_type)
             res.redirect('/authentication');
         } else {
             res.send('Incorrect Username and/or Password!');
@@ -72,10 +74,17 @@ app.post('/update', async (req, res) => {
     try {
         const email = localStorage.getItem('email');
         const senha = localStorage.getItem('senha');
+        var access_type = localStorage.getItem('access_type');
         const [results] = await connection.promise().query('SELECT code FROM usuario WHERE login = ? AND password = ?', [email, senha]);
         
         if (results.length > 0) {
-            res.redirect('/home');
+            if (access_type == 1) {
+                res.redirect('/usuario_financeiro');
+            } else if (access_type == 2) {
+                res.redirect('/usuario_administrativo');
+            } else {
+                res.redirect('/adm');
+            }
         } else {
             res.send('Incorrect Username and/or Password!');
         }
@@ -112,6 +121,42 @@ app.get('/authentication', (req, res) => {
     } else {
         res.send('Please login to view this page!');
     }
+});
+
+app.get('/empresa', (req, res) => {
+    if (req.session.loggedin) {
+        res.sendFile(path.join(__dirname, 'dashProprietario.html'));
+    } else {
+        res.send('Please login to view this page!');
+    }
+});
+
+app.get('/usuario_financeiro', (req, res) => {
+    if (req.session.loggedin) {
+        res.sendFile(path.join(__dirname, 'dashFinanceiro.html'));
+    } else {
+        res.send('Please login to view this page!');
+    }
+});
+
+app.get('/usuario_administrativo', (req, res) => {
+    if (req.session.loggedin) {
+        res.sendFile(path.join(__dirname, 'dashAdministrador.html'));
+    } else {
+        res.send('Please login to view this page!');
+    }
+});
+
+app.get('/register_proprietario', (req, res) => {
+    if (req.session.loggedin) {
+        res.sendFile(path.join(__dirname, 'register_Proprietario.html'));
+    } else {
+        res.send('Please login to view this page!');
+    }
+});
+
+app.get('/adm', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashSoyBean.html'));
 });
 
 app.get('/home', (req, res) => {
