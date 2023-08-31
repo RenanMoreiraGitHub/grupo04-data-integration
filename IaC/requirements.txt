@@ -1,0 +1,4 @@
+boto3
+pandas
+awswrangler
+pandas==2.0.3
