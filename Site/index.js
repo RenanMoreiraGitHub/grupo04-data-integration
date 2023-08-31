@@ -51,7 +51,6 @@ app.post('/auth', async (req, res) => {
         const [results] = await connection.promise().query('SELECT * FROM usuario WHERE login = ? AND password = ?', [username, password]);
         if (results.length > 0) {
             const resultUpdate = await connection.promise().query('UPDATE usuario SET code = ?  where login = ? and password = ?', [code, username, password])
-            sendEmail();
             req.session.loggedin = true;
             req.session.username = username;
             req.session.password = password;
@@ -59,6 +58,7 @@ app.post('/auth', async (req, res) => {
             localStorage.setItem('email', username);
             localStorage.setItem('senha', password);
             localStorage.setItem('access_type', access_type)
+            sendEmail();
             res.redirect('/authentication');
         } else {
             res.send('Incorrect Username and/or Password!');
