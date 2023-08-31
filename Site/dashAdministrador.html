@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/dashAdministrador.css">
+    <title>Dashboard com Gráficos</title>
+</head>
+<body>
+    <div class="sidebar">
+        <ul class="menu">
+            <li><a href="#"><b>SOYBEAN</b></a></li>
+            <li><a href="#">Meu Perfil</a></li>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Silos</a></li>
+            <li><a href="#">Sair</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="dashboard">
+            <div class="chart-container center-chart">
+                <h2 class="chart-title">Fertilidade do Solo</h2>
+                <canvas id="salesChart1" width="500" height="360"></canvas>
+            </div>
+            <div>
+                <div class="chart-container side-chart">
+                    <h2 class="chart-title">Probabilidade de chuva</h2>
+                    <canvas id="salesChart2" width="300" height="150"></canvas>
+                </div>
+                <div class="chart-container side-chart">
+                    <h2 class="chart-title">Capacidade dos silos</h2>
+                    <canvas id="usersChart" width="300" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
+<script>
+const salesData1 = {
+    labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+    datasets: [{
+        label: 'Fósforo',
+        data: [59, 60, 66, 70, 58, 55],
+        borderColor: '#667c29',
+        fill: false, 
+        borderWidth: 2
+    }
+    ,{
+            label: 'Potássio',
+            data: [290, 288, 290, 280, 275, 283],
+            borderColor: '#3498db', 
+            fill: false,
+            borderWidth: 2
+    },{
+        label: 'Nitrogênio',
+        data: [224, 220, 213, 200, 210, 220],
+        borderColor: '#ffee00', 
+        fill: false,
+        borderWidth: 2 
+    }
+]
+};
+
+const salesData2 = {
+    labels: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
+    datasets: [{
+        label: 'Probabilidade de chuva em %',
+        data: [10, 40, 60, 100, 100, 50,10],
+        backgroundColor: '#667c29',
+        borderWidth: 1
+    }]
+};
+
+const usersData = {
+    labels: ['Silo A', 'Silo B', 'Silo C', 'Silo D'],
+    datasets: [{
+        label: 'Capacidade dos Silos em %',
+        data: [30, 50, 80, 100],
+        backgroundColor: '#667c29',
+        borderWidth: 1
+    }]
+};
+const salesCtx1 = document.getElementById('salesChart1').getContext('2d');
+const salesChart1 = new Chart(salesCtx1, {
+    type: 'line',
+    data: salesData1
+});
+
+const salesCtx2 = document.getElementById('salesChart2').getContext('2d');
+const salesChart2 = new Chart(salesCtx2, {
+    type: 'bar',
+    data: salesData2
+});
+
+const usersCtx = document.getElementById('usersChart').getContext('2d');
+const usersChart = new Chart(usersCtx, {
+    type: 'bar',
+    data: usersData
+});
+
+</script>
