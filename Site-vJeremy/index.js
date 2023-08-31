@@ -87,17 +87,17 @@ app.post('/update', async (req, res) => {
 
 async function sendEmail() { 
     const transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com',
+        host: 'smtp-mail.outlook.com',
         port: 587,
         secure: false, // use SSL
         auth: {
-            user: 'renan.lima@bandtec.com.br',
-            pass: '**********'   
+            user: 'contato.inview@outlook.com',
+            pass: 'inview@2021'   
         }
         })
     
     const info= await transporter.sendMail({ 
-        from: "renan.lima@bandtec.com.br", 
+        from: "contato.inview@outlook.com", 
         to: `${localStorage.getItem('email')}`, 
         subject: "Código de autenticação recebido", 
         text: `Insira o código ${code} para validar o seu acesso na plataforma SoyBean`,
