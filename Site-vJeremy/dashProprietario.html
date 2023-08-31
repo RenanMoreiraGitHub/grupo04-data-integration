@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/dashProprietario.css">
+    <title>Dashboard com Gráficos</title>
+</head>
+<body>
+    <div class="sidebar">
+        <ul class="menu">
+            <li><a href="#"><b>SOYBEAN</b></a></li>
+            <li><a href="#">Meu Perfil</a></li>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Vendas</a></li>
+            <li><a href="#">Usuários</a></li>
+            <li><a href="#">Silos</a></li>
+            <li><a href="#">Cadastrar usuários</a></li>
+            <li><a href="#">Sair</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="dashboard">
+            <div class="chart-container center-chart">
+                <h2 class="chart-title">Vendas Mensais</h2>
+                <canvas id="salesChart1" width="500" height="360"></canvas>
+            </div>
+            <div>
+                <div class="chart-container side-chart">
+                    <h2 class="chart-title">Gastos</h2>
+                    <canvas id="salesChart2" width="300" height="150"></canvas>
+                </div>
+                <div class="chart-container side-chart ">
+                    <h2 class="chart-title">Usuários Ativos</h2>
+                    <canvas id="usersChart" width="300" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
+<script>
+const salesData1 = {
+    labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+    datasets: [{
+        label: 'Vendas Mensais',
+        data: [1200, 1500, 800, 1700, 2000, 1400],
+        backgroundColor: '#357c29',
+        borderWidth: 1
+    }]
+};
+
+const salesData2 = {
+    labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+    datasets: [{
+        label: 'Gastos',
+        data: [800, 1000, 600, 1300, 1500, 1100],
+        backgroundColor: '#57b846',
+        borderWidth: 1
+    }]
+};
+
+const usersData = {
+    labels: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
+    datasets: [{
+        label: 'Usuários Ativos por Dia',
+        data: [100, 150, 200, 180, 220, 250, 120],
+        backgroundColor: '#667c29',
+        borderWidth: 1
+    }]
+};
+const salesCtx1 = document.getElementById('salesChart1').getContext('2d');
+const salesChart1 = new Chart(salesCtx1, {
+    type: 'bar',
+    data: salesData1
+});
+
+const salesCtx2 = document.getElementById('salesChart2').getContext('2d');
+const salesChart2 = new Chart(salesCtx2, {
+    type: 'bar',
+    data: salesData2
+});
+
+const usersCtx = document.getElementById('usersChart').getContext('2d');
+const usersChart = new Chart(usersCtx, {
+    type: 'bar',
+    data: usersData
+});
+
+</script>

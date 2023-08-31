@@ -143,21 +143,19 @@ iframe {
 .txt2 {
   font-family: Poppins-Regular;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 8.5;
   color: #666666;
 }
 
 
 /*//////////////////////////////////////////////////////////////////
 [ Authentication]*/
-
 .message-sender {
   font-size: 14px;
   margin-bottom: 10px;
 }
-
-
 /*//////////////////////////////////////////////////////////////////
+
 [ login ]*/
 
 .limiter {
@@ -200,6 +198,42 @@ iframe {
   padding: 100px 130px 100px 95px;
 }
 
+.wrap-login100-proprietario {
+  width: 40%;
+  height: 750px;
+  background: #fff;
+  border-radius: 10px;
+
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 70px 100px 70px 65px;
+}
+
+.wrap-form-cadastro {
+  width: 600px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.wrap-form-cadastro > div {
+  width: 40%;
+  margin-bottom: 15px;
+}
+
+.inputs {
+  width: 25%;
+  margin-bottom: 10px;
+}
+
+.input100 {
+  width: 100%;
+}
+
 /*------------------------------------------------------------------
 [  ]*/
 .login100-pic {
@@ -215,6 +249,7 @@ iframe {
 [  ]*/
 .login100-form {
   width: 290px;
+  height: 400px;
 }
 
 .login100-form-title {
@@ -230,6 +265,30 @@ iframe {
   padding-top: 10px;
 }
 
+.login100-form-title-registro-proprietario {
+  font-family: Poppins-Bold;
+  font-size: 24px;
+  color: #333333;
+  line-height: 1.2;
+
+  width: 100%;
+  display: block;
+  padding-bottom: 54px;
+  padding-top: 10px;
+}
+
+.login100-form-title-tipo-acesso {
+  font-family: Poppins-Bold;
+  font-size: 18px;
+  color: #333333;
+  line-height: 1.2;
+  text-align: start;
+
+  width: 700px;
+  display: block;
+  padding-bottom: 45px;
+  padding-top: 35px;
+}
 
 /*---------------------------------------------*/
 .wrap-input100 {
@@ -332,6 +391,18 @@ input::-webkit-inner-spin-button {
   flex-wrap: wrap;
   justify-content: center;
   padding-top: 10px;
+}
+
+.container-login100-form-btn-proprietario {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-top: 35px;
 }
 
 .login100-form-btn {
@@ -467,4 +538,106 @@ input::-webkit-inner-spin-button {
     visibility: visible;
     opacity: 1;
   }
+
+}
+
+.form-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+input {
+  outline: none;
+  margin: 0;
+  border: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  width: 100%;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.radio-container {
+  display: inline-block;
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.radio-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radio-container input:checked ~ .checkmark {
+  background-color: #e5e5e5;
+}
+
+.radio-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.radio-container .checkmark:after {
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  background: #57b846;
+}
+
+.checkmark {
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #e5e5e5;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  -webkit-box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+  -moz-box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.m-r-55 {
+  margin-right: 55px;
 }
