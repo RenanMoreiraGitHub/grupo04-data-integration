@@ -18,9 +18,9 @@ logging.getLogger("AWSIoTPythonSDK.core").setLevel(logging.DEBUG)
 
 # AWS IoT Core settings
 endpoint = "a2rloye1ylwgx9-ats.iot.us-east-1.amazonaws.com"
-root_ca_path = "/home/rodrigo/Documentos/faculdade/keys/AmazonRootCA1.pem"
-private_key_path = "/home/rodrigo/Documentos/faculdade/keys/49bc3211976ba1763f1045514423f28b823e218f3967e8873860eed0bf38601c-private.pem.key"
-certificate_path = "/home/rodrigo/Documentos/faculdade/keys/49bc3211976ba1763f1045514423f28b823e218f3967e8873860eed0bf38601c-certificate.pem.crt"
+root_ca_path = "/home/renan/Área de Trabalho/grupo04-data-integration/pythonScriptAWS/AmazonRootCA1.pem"
+private_key_path = "/home/renan/Área de Trabalho/grupo04-data-integration/pythonScriptAWS/49bc3211976ba1763f1045514423f28b823e218f3967e8873860eed0bf38601c-private.pem.key"
+certificate_path = "/home/renan/Área de Trabalho/grupo04-data-integration/pythonScriptAWS/49bc3211976ba1763f1045514423f28b823e218f3967e8873860eed0bf38601c-certificate.pem.crt"
 client_id = "iotconsole-c140d8e7-8f3f-495f-b657-31f4eb6ba7f8"
 
 # Create an AWS IoT MQTT client
