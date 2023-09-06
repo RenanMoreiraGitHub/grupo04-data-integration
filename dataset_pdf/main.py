@@ -7,6 +7,7 @@ from os import getenv
 from dotenv import load_dotenv; load_dotenv()
 from pathlib import Path
 from os.path import join
+from unidecode import unidecode
 
 from mysql_connection import MysqlConnection
 
@@ -84,10 +85,31 @@ generator = Faker()
 def generate_address(row):
     return generator.address()
 
-df = pd.DataFrame({'name': list_names, 'cpf': list_cpfs, 'rg': list_rgs})
+def generate_access_type(row):
+    return randint(0,1)
+
+def get_logins():
+    emails = ['gmail', 'hotmail']
+    logins = []
+    for i in range(len(list_names)):
+        name = unidecode(''.join(list_names[i].split(' ')[:2]).lower())
+        logins.append(f'{name}@{emails[randint(0,1)]}')
+    return logins
+
+def get_passwords():
+    passwords = []
+    for _ in range(len(list_names)):
+        passwd = generator.pystr(min_chars=None, max_chars=10)
+        passwords.append(passwd)
+    return passwords
+
+df = pd.DataFrame({'login': get_logins(), 'password': get_passwords(), 'name': list_names, 'cpf': list_cpfs, 'rg': list_rgs})
 df['age'] = pd.Series(range(18, 35)).sample(int(173), replace=True).array
 df['gender'] = df.apply(lambda row: label_race(row), axis=1)
 df['adress'] = df.apply(lambda row: generate_address(row), axis=1)
+df['access_type'] = df.apply(lambda row: generate_access_type(row), axis=1)
+
+df['code'] = None
 
 print(df.head())
 
@@ -95,8 +117,8 @@ downloads_path = str(join(Path.home(), "Downloads"))
 print(f'Downloading dataset pdf to {downloads_path}...')
 df.to_excel(join(downloads_path, 'dados_vazados_clientes_pdf.xlsx'), index=True)
 
-mysql_db = MysqlConnection(
-    getenv('USER_BD'), getenv('PASS_BD'), getenv('HOST_BD'))
-mysql_db.connect()
-mysql_db.insert_dataframe(df, 'dados_vazados_clientes_pdf', 'soybean', index=True)
-mysql_db.disconnect()
+# mysql_db = MysqlConnection(
+#     getenv('USER_BD'), getenv('PASS_BD'), getenv('HOST_BD'))
+# mysql_db.connect()
+# mysql_db.insert_dataframe(df, 'usuario', 'soybean', index=True)
+# mysql_db.disconnect()
