@@ -9,8 +9,8 @@ def get_recent_file(bucket_name):
 
 def main(event, context):
     print('INFO: Getting recent files')
-    last_filie = get_recent_file('stagged-soybean-gp4-sptech')
-    df = wr.s3.read_parquet(f's3://stagged-soybean-gp4-sptech/{last_filie}')
+    last_filie = get_recent_file('stagged-soybean-gp4-sptech-prod')
+    df = wr.s3.read_parquet(f's3://stagged-soybean-gp4-sptech-prod/{last_filie}')
     df = df.round(2)
 
     print('INFO: Creating NPK table')
@@ -19,7 +19,7 @@ def main(event, context):
                                     'p':'phosphorus',
                                     'k':'potassium'})
     wr.s3.to_parquet(df=df_npk,
-                     path="s3://consumed-soybean-gp4-sptech/npk/", 
+                     path="s3://consumed-soybean-gp4-sptech-prod/npk/", 
                      mode="append",
                      dataset=True)
     del df_npk
@@ -28,7 +28,7 @@ def main(event, context):
     print('INFO: Creating BMP table')
     df_bmp = df[['device_id','device_name','temperature','pressure','setor','data_hora']]
     wr.s3.to_parquet(df=df_bmp,
-                    path="s3://consumed-soybean-gp4-sptech/bmp/", 
+                    path="s3://consumed-soybean-gp4-sptech-prod/bmp/", 
                     mode="append",
                     dataset=True)
     del df_bmp
@@ -36,7 +36,7 @@ def main(event, context):
     print('INFO: Creating ANEMOMETRO table')
     df_anemometro = df[['device_id','device_name','air-speed','setor','data_hora']]
     wr.s3.to_parquet(df=df_anemometro,
-                     path="s3://consumed-soybean-gp4-sptech/anemometro/", 
+                     path="s3://consumed-soybean-gp4-sptech-prod/anemometro/", 
                      mode="append",
                      dataset=True)
     del df_anemometro
@@ -44,7 +44,7 @@ def main(event, context):
     print('INFO: Creating DHT table')
     df_dht = df[['device_id','device_name','temperature','humidity','setor','data_hora']]
     wr.s3.to_parquet(df=df_dht,
-                     path="s3://consumed-soybean-gp4-sptech/dht/", 
+                     path="s3://consumed-soybean-gp4-sptech-prod/dht/", 
                      mode="append",
                      dataset=True)
     del df_dht
@@ -52,7 +52,7 @@ def main(event, context):
     print('INFO: Creating TCRT table')
     df_tcrt = df[['device_id','device_name','capacity','collected','setor','data_hora']]
     wr.s3.to_parquet(df=df_tcrt,
-                     path="s3://consumed-soybean-gp4-sptech/tcrt/", 
+                     path="s3://consumed-soybean-gp4-sptech-prod/tcrt/", 
                      mode="append",
                      dataset=True)
     del df_tcrt
@@ -60,7 +60,7 @@ def main(event, context):
     print('INFO: Creating UMIGRAIN table')
     df_umigrain = df[['device_id','device_name','humidity_grain','setor','data_hora']]
     wr.s3.to_parquet(df=df_umigrain,
-                     path="s3://consumed-soybean-gp4-sptech/umigrain/", 
+                     path="s3://consumed-soybean-gp4-sptech-prod/umigrain/", 
                      mode="append",
                      dataset=True)
     del df_umigrain
