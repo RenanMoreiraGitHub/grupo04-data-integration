@@ -10,6 +10,7 @@ from os.path import join
 from unidecode import unidecode
 
 from mysql_connection import MysqlConnection
+from hash_unhash import hash_item
 
 def get_all_pages_text_pdf(pdf: str) -> str:
     reader = PdfReader(pdf)
@@ -70,7 +71,7 @@ for line in all_text.splitlines():
             name: str = rg_name[0].split('AT4')[1]
             splitter = re.findall(r' - SALA \d+', name)
             if len(splitter) > 0:
-                list_names.append(name.split(splitter[0])[-1].replace('2013 -PROFMAT -', '').strip())
+                list_names.append(name.split(splitter[0])[-1].replace('2013 -PROFMAT -', '').strip().split(' ')[0])
 
 def label_race(row):
    name = row['name'].split(' ')[0].upper()
@@ -93,14 +94,15 @@ def get_logins():
     logins = []
     for i in range(len(list_names)):
         name = unidecode(''.join(list_names[i].split(' ')[:2]).lower())
-        logins.append(f'{name}@{emails[randint(0,1)]}')
+        logins.append(f'{name}@{emails[randint(0,1)]}.com')
     return logins
 
 def get_passwords():
     passwords = []
-    for _ in range(len(list_names)):
-        passwd = generator.pystr(min_chars=None, max_chars=10)
-        passwords.append(passwd)
+    for i in range(len(list_names)):
+        # passwd = generator.pystr(min_chars=None, max_chars=10)
+        passwd = list_names[i].split(' ')[0] + '123'
+        passwords.append(hash_item(passwd))
     return passwords
 
 df = pd.DataFrame({'login': get_logins(), 'password': get_passwords(), 'name': list_names, 'cpf': list_cpfs, 'rg': list_rgs})
