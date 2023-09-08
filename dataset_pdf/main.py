@@ -119,8 +119,8 @@ downloads_path = str(join(Path.home(), "Downloads"))
 print(f'Downloading dataset pdf to {downloads_path}...')
 df.to_excel(join(downloads_path, 'dados_vazados_clientes_pdf.xlsx'), index=True)
 
-# mysql_db = MysqlConnection(
-#     getenv('USER_BD'), getenv('PASS_BD'), getenv('HOST_BD'))
-# mysql_db.connect()
-# mysql_db.insert_dataframe(df, 'usuario', 'soybean', index=True)
-# mysql_db.disconnect()
+mysql_db = MysqlConnection(
+    getenv('USER_BD'), getenv('PASS_BD'), getenv('HOST_BD'))
+mysql_db.connect()
+mysql_db.insert_dataframe(df, 'usuario', 'soybean', index=True)
+mysql_db.disconnect()
