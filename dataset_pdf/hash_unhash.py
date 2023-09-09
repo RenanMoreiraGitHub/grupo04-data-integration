@@ -43,7 +43,8 @@ def unhash_item_df(row):
 # unhashed_item = unhash_item(hashed_item)
 # print(f'unhashed_item={unhashed_item}')
 
-downloads_path = str(join(Path.home(), "Downloads"))
-df = pd.read_excel(join(downloads_path,'dados_vazados_clientes_pdf.xlsx'))
-df['password'] = df.apply(lambda row: unhash_item_df(row), axis=1)
-print(df['password'])
+if __name__ == "__main__":
+    downloads_path = str(join(Path.home(), "Downloads"))
+    df = pd.read_excel(join(downloads_path,'dados_vazados_clientes_pdf.xlsx'))
+    df['password'] = df.apply(lambda row: unhash_item_df(row), axis=1)
+    print(df['password'])
