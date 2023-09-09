@@ -10,6 +10,13 @@ from dht11 import DHT11
 from tcrt5000 import TCRT5000
 from umigrain import Umigrain
 from datetime import datetime
+from mysql_connection import MysqlConnection
+from dotenv import load_dotenv
+from os import getenv
+import pandas as pd
+
+load_dotenv()
+
 
 # Add these lines before the AWSIoTMQTTClient configuration
 # Set the logging level to DEBUG
@@ -92,14 +99,23 @@ def simulate_data():
         # Publish the temperature data
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
-        time.sleep(1)
+        time.sleep(0.3)
+        return data
 
 
 try:
+    mysql_connection = MysqlConnection(
+        getenv("USER_BD"), getenv("PASS_BD"), getenv("HOST_BD")
+    )
+    mysql_connection.connect()
     while True:
-        simulate_data()
+        data = simulate_data()
+        df = pd.DataFrame([data])
+        df = df.round(2)
+        mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
+
 except KeyboardInterrupt:
-    pass
+    mysql_connection.disconnect()
 
 # Disconnect from AWS IoT Core
 mqtt_client.disconnect()
