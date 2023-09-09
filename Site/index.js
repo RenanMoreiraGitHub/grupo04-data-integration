@@ -9,7 +9,7 @@ const LocalStorage = require('node-localstorage').LocalStorage;
 const localStorage = new LocalStorage('./scratch');
 
 const connection = mysql.createConnection({
-    host: 'aws-python-project-dev-mydbinstance-6ffzmbct02f9.clstgtmhjsoh.us-east-1.rds.amazonaws.com',
+    host: 'aws-soybean-prod-mydbinstance-c51s1md1dk4d.cerbmnica18k.us-east-1.rds.amazonaws.com',
     user: 'soybean',
     password: 'urubu100',
     database: 'soybean'
