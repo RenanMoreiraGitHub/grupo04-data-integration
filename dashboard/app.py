@@ -38,7 +38,6 @@ df_money['real'] = df_money['real'].str.replace(',','.').astype(float)
 df_money['usd'] = df_money['usd'].str.replace(',','.').astype(float)
 
 
-
 def history_exportation():
     with st.container(): 
         st.header("Quantidade de Soja Exportada")
@@ -254,13 +253,8 @@ def analise():
             df_filtred_rain = df_rain.groupby([temporal_slct])['precipitation'].mean().round().reset_index()
             df_filtred_export = df_export.groupby([temporal_slct])['kg'].sum().reset_index()
 
-            
-            print(df_filtred_rain.columns)
-            print('-----------------------------------------------------------------------------------------------------')
-            print(df_filtred_export.columns)
-
-            df_merged = df_filtred_rain[['state','precipitation',temporal_slct]].merge(df_filtred_export[['state','kg',temporal_slct]],
-                                                                            how='inner', on=['state',temporal_slct])
+            df_merged = df_filtred_rain[['precipitation',temporal_slct]].merge(df_filtred_export[['kg',temporal_slct]],
+                                                                            how='inner', on=[temporal_slct])
 
             graf = px.scatter(
                 df_merged,
@@ -275,8 +269,7 @@ def analise():
         )
 
         st.plotly_chart(graf, use_container_width=True)
-
-
+    
 
 pages = {
     'Análises': analise,
