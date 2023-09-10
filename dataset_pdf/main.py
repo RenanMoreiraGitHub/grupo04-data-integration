@@ -84,10 +84,12 @@ def label_race(row):
 
 generator = Faker()
 def generate_address(row):
-    return generator.address()
+    adress = generator.address()
+    adress = re.sub(r"\d", "*", str(adress))
+    return adress
 
 def generate_access_type(row):
-    return randint(0,1)
+    return randint(1,2)
 
 def get_logins():
     emails = ['gmail', 'hotmail']
