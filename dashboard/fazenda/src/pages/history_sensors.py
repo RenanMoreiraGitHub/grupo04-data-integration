@@ -5,6 +5,17 @@ import plotly.express as px
 def render(df_anemometro, df_bmp, df_dht, df_npk, df_tcrt, df_umigrain):
     with st.container():
         temporal_slct = st.radio("Visão por", ('Dia', 'Mes', 'Ano'), horizontal=True)
+        setor_slct = st.radio("Setor", ('Todos', 'Selecionar'), horizontal=True)
+
+        if setor_slct == 'Selecionar':
+            setors_slct = st.multiselect('Selecione os Setores:', df_npk['setor'].unique())
+            df_anemometro = df_anemometro.loc[df_anemometro['setor'].isin(setors_slct)]
+            df_bmp = df_bmp.loc[df_bmp['setor'].isin(setors_slct)]
+            df_dht = df_dht.loc[df_dht['setor'].isin(setors_slct)]
+            df_npk = df_npk.loc[df_npk['setor'].isin(setors_slct)]
+            df_tcrt = df_tcrt.loc[df_tcrt['setor'].isin(setors_slct)]
+            df_umigrain = df_umigrain.loc[df_umigrain['setor'].isin(setors_slct)]
+
         df_filtred_anemometro = df_anemometro.groupby([temporal_slct])[['air-speed']].mean().reset_index()        
         df_filtred_bmp = df_bmp.groupby([temporal_slct])[['temperature','pressure']].mean().reset_index()        
         df_filtred_dht = df_dht.groupby([temporal_slct])[['humidity']].mean().reset_index()        

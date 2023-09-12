@@ -9,7 +9,7 @@ import src.pages.correlation as correlation
 
 
 def export_history():
-    df_export = pd.read_csv('datasets\dataset_export_soybean.csv')[['state','kg','date']]
+    df_export = pd.read_csv('./datasets/dataset_export_soybean.csv')[['state','kg','date']]
     df_export = df_export.sort_values(by=['date']).reset_index(drop=True)
     df_export['Dia'] = pd.to_datetime(df_export['date'])
     df_export['Mes'] = df_export['Dia'].apply(lambda x: str(x.year)+str(x.month).zfill(2))
@@ -18,7 +18,7 @@ def export_history():
     h_exportation.render(df_export)
 
 def rain_history():
-    df_rain = pd.read_csv('datasets\dataset_precipitation_soybean.csv')[['state','date','precipitation']]
+    df_rain = pd.read_csv('./datasets/dataset_precipitation_soybean.csv')[['state','date','precipitation']]
     df_rain['precipitation'] = df_rain['precipitation'].str.replace(',','.').astype(float)
     df_rain['Dia'] = pd.to_datetime(df_rain['date'])
     df_rain['Mes'] = df_rain['Dia'].apply(lambda x: str(x.year)+str(x.month).zfill(2))
@@ -27,7 +27,7 @@ def rain_history():
     h_rain.render(df_rain)
 
 def climate_history():
-    df_climate = pd.read_csv(r'datasets\temperature_brazil.csv')[['TempBulboSeco','TempBulboUmido','TempMaxima',
+    df_climate = pd.read_csv('./datasets/temperature_brazil.csv')[['TempBulboSeco','TempBulboUmido','TempMaxima',
                                                                  'TempMinima','UmidadeRelativa','date']]
     df_climate['TempBulboSeco'] = df_climate['TempBulboSeco'].str.replace(',', '.').astype(float)
     df_climate['TempBulboUmido'] = df_climate['TempBulboUmido'].str.replace(',', '.').astype(float)
@@ -45,7 +45,7 @@ def climate_history():
     h_climate.render(df_climate)
 
 def money_history():
-    df_money = pd.read_csv('datasets\dataset_prices_soybean.csv')[['date','real','usd']]
+    df_money = pd.read_csv('./datasets/dataset_prices_soybean.csv')[['date','real','usd']]
     df_money['Dia'] = pd.to_datetime(df_money['date'])
     df_money['Mes'] = df_money['Dia'].apply(lambda x: str(x.year)+str(x.month).zfill(2))
     df_money['Ano'] = df_money['Dia'].apply(lambda x: str(x.year))
@@ -56,7 +56,7 @@ def money_history():
     h_price.render(df_money)
 
 def analysis():
-    df_export = pd.read_csv('datasets\dataset_export_soybean.csv')[['state','kg','date']]
+    df_export = pd.read_csv('./datasets/dataset_export_soybean.csv')[['state','kg','date']]
     df_export = df_export.sort_values(by=['date']).reset_index(drop=True)
     df_export['Dia'] = pd.to_datetime(df_export['date'])
     df_export['Mes'] = df_export['Dia'].apply(lambda x: str(x.year)+str(x.month).zfill(2))
@@ -64,7 +64,7 @@ def analysis():
     df_export = df_export.loc[~df_export['state'].isin(['RO', 'MS', 'ND'])]
 
 
-    df_rain = pd.read_csv('datasets\dataset_precipitation_soybean.csv')[['state','date','precipitation']]
+    df_rain = pd.read_csv('./datasets/dataset_precipitation_soybean.csv')[['state','date','precipitation']]
     df_rain['precipitation'] = df_rain['precipitation'].str.replace(',','.').astype(float)
     df_rain['Dia'] = pd.to_datetime(df_rain['date'])
     df_rain['Mes'] = df_rain['Dia'].apply(lambda x: str(x.year)+str(x.month).zfill(2))
