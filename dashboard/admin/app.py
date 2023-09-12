@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import webbrowser
 
 import src.pages.history_exportation as h_exportation
 import src.pages.history_rain as h_rain
@@ -7,6 +8,7 @@ import src.pages.history_climate as h_climate
 import src.pages.history_price as h_price
 import src.pages.correlation as correlation
 
+url = 'https://docs.google.com/spreadsheets/d/18kady-AupCCbbpmUeYg81dC0b9Yks1K7oABQ3T8-n3Q/edit#gid=126564170'
 
 def export_history():
     df_export = pd.read_csv('./datasets/dataset_export_soybean.csv')[['state','kg','date']]
@@ -74,6 +76,8 @@ def analysis():
 
     correlation.render(df_export, df_rain)
 
+def call_google_sheet():
+    webbrowser.open_new_tab(url)
 
 pages = {
     'Análises': analysis,
@@ -81,6 +85,7 @@ pages = {
     'Histórico do clima': climate_history,
     'Histórico de exportação': export_history,
     'Histórico de preço': money_history,
+    'Google Sheet': call_google_sheet
 }
 
 page = st.sidebar.selectbox('Selecione uma página', list(pages.keys()))
