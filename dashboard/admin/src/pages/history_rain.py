@@ -33,7 +33,7 @@ def render(df_rain):
             graf.update_layout(
                 title_text=f"Quantidade de Chuva por Estado agrupado por {temporal_slct}",
                 xaxis_title='Data',
-                yaxis_title='Preciptação (mm)'
+                yaxis_title='Precipitação (mm)'
             )
 
             st.plotly_chart(graf, use_container_width=True)

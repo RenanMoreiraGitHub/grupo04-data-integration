@@ -4,7 +4,7 @@ import plotly.express as px
 
 
 def render(df_export, df_rain):
-    st.header("Correlação entre a quantidade exportada e preciptação")
+    st.header("Correlação entre a quantidade exportada e precipitação")
     with st.container():
         temporal_slct = st.radio("Visão por", ('Dia', 'Mes', 'Ano'), horizontal=True)
         group_slct = st.radio("Agrupado por", ('Estados', 'Nenhum'), horizontal=True)
@@ -52,7 +52,7 @@ def render(df_export, df_rain):
 
         graf.update_layout(
             title_text=f"Quantidade de Chuva por Estado agrupado por {temporal_slct}",
-            xaxis_title='Preciptação (mm)',
+            xaxis_title='Precipitação (mm)',
             yaxis_title='Quantidade de soja exportada em toneladas'
         )
 
