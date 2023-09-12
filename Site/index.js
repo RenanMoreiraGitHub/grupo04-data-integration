@@ -84,11 +84,11 @@ app.post('/update', async (req, res) => {
             if (codigoVer == parseInt(results[0].code)) {
                 console.log(req.session.codeAuth == parseInt(results[0].code))
                 if (access_type == 1) {
-                    return res.redirect('/usuario_financeiro');
+                    return res.redirect('http://ec2-100-27-12-54.compute-1.amazonaws.com/');
                 } else if (access_type == 2) {
-                    return res.redirect('/usuario_administrativo');
+                    return res.redirect('http://ec2-100-27-12-54.compute-1.amazonaws.com/');
                 } else {
-                    return res.redirect('/adm');
+                    return res.redirect('/');
                 }
             }
         } else {
