@@ -77,7 +77,7 @@ def analysis():
     correlation.render(df_export, df_rain)
 
 def call_google_sheet():
-    webbrowser.open_new_tab(url)
+    st.markdown(f"Google Sheet: [link]({url})")
 
 pages = {
     'Análises': analysis,
