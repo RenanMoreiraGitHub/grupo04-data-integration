@@ -9,7 +9,7 @@ const LocalStorage = require('node-localstorage').LocalStorage;
 const localStorage = new LocalStorage('./scratch');
 
 const connection = mysql.createConnection({
-    host: 'aws-python-project-dev-mydbinstance-6ffzmbct02f9.clstgtmhjsoh.us-east-1.rds.amazonaws.com',
+    host: 'aws-soybean-prod-mydbinstance-c51s1md1dk4d.cerbmnica18k.us-east-1.rds.amazonaws.com',
     user: 'soybean',
     password: 'urubu100',
     database: 'soybean'
@@ -72,21 +72,27 @@ app.post('/auth', async (req, res) => {
 
 app.post('/update', async (req, res) => {
     try {
+        const { codeAuth } = req.body;
+        console.log(req.body.codeAuth);
+        var codigoVer = req.body.codeAuth;
         const email = localStorage.getItem('email');
         const senha = localStorage.getItem('senha');
         var access_type = localStorage.getItem('access_type');
-        const [results] = await connection.promise().query('SELECT code FROM usuario WHERE login = ? AND password = ?', [email, senha]);
-        
+        const [results] = await connection.promise().query('SELECT code FROM usuario WHERE login = ? AND password = ? and code = ?', [email, senha, parseInt(codigoVer)]);
         if (results.length > 0) {
-            if (access_type == 1) {
-                res.redirect('/usuario_financeiro');
-            } else if (access_type == 2) {
-                res.redirect('/usuario_administrativo');
-            } else {
-                res.redirect('/adm');
+            console.log(results)
+            if (codigoVer == parseInt(results[0].code)) {
+                console.log(req.session.codeAuth == parseInt(results[0].code))
+                if (access_type == 1) {
+                    return res.redirect('/usuario_financeiro');
+                } else if (access_type == 2) {
+                    return res.redirect('/usuario_administrativo');
+                } else {
+                    return res.redirect('/adm');
+                }
             }
         } else {
-            res.send('Incorrect Username and/or Password!');
+            return res.redirect('/authentication');
         }
     } catch (error) {
         console.error(error);
