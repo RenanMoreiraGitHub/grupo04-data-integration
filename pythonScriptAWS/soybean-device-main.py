@@ -10,6 +10,13 @@ from dht11 import DHT11
 from tcrt5000 import TCRT5000
 from umigrain import Umigrain
 from datetime import datetime
+from mysql_connection import MysqlConnection
+from dotenv import load_dotenv
+from os import getenv
+import pandas as pd
+
+load_dotenv()
+
 
 # Add these lines before the AWSIoTMQTTClient configuration
 # Set the logging level to DEBUG
@@ -17,11 +24,11 @@ logging.getLogger("AWSIoTPythonSDK.core").setLevel(logging.DEBUG)
 
 
 # AWS IoT Core settings
-endpoint = "a2rloye1ylwgx9-ats.iot.us-east-1.amazonaws.com"
-root_ca_path = "/home/rodrigo/Documentos/faculdade/keys/AmazonRootCA1.pem"
-private_key_path = "/home/rodrigo/Documentos/faculdade/keys/49bc3211976ba1763f1045514423f28b823e218f3967e8873860eed0bf38601c-private.pem.key"
-certificate_path = "/home/rodrigo/Documentos/faculdade/keys/49bc3211976ba1763f1045514423f28b823e218f3967e8873860eed0bf38601c-certificate.pem.crt"
-client_id = "iotconsole-c140d8e7-8f3f-495f-b657-31f4eb6ba7f8"
+endpoint = "a30opv7455ikaq-ats.iot.us-east-1.amazonaws.com"
+root_ca_path = "certificados/AmazonRootCA1.pem"
+private_key_path = "certificados/77552a79e326f62d3feb20e9ba08ea9da2ab5cfedfc174692291de12f8c5facb-private.pem.key"
+certificate_path = "certificados/77552a79e326f62d3feb20e9ba08ea9da2ab5cfedfc174692291de12f8c5facb-certificate.pem.crt"
+client_id = "iotconsole-a67f9bf9-0059-4c59-a8c1-455e1272b31c"
 
 # Create an AWS IoT MQTT client
 mqtt_client = AWSIoTMQTTClient(client_id)
@@ -92,14 +99,23 @@ def simulate_data():
         # Publish the temperature data
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
-        time.sleep(1)
+        time.sleep(0.3)
+        return data
 
 
 try:
+    mysql_connection = MysqlConnection(
+        getenv("USER_BD"), getenv("PASS_BD"), getenv("HOST_BD")
+    )
+    mysql_connection.connect()
     while True:
-        simulate_data()
+        data = simulate_data()
+        df = pd.DataFrame([data])
+        df = df.round(2)
+        mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
+
 except KeyboardInterrupt:
-    pass
+    mysql_connection.disconnect()
 
 # Disconnect from AWS IoT Core
 mqtt_client.disconnect()

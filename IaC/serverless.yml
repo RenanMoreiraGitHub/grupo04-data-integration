@@ -1,4 +1,7 @@
-service: aws-python-project
+# comando para rodar o jupyter
+# root@ip-10-0-0-40:~# jupyter-notebook --allow-root --ip 0.0.0.0 --no-browser
+
+service: aws-soybean
 
 frameworkVersion: "3"
 
@@ -7,35 +10,31 @@ provider:
   runtime: python3.9
 
 functions:
-
-  lambda1:
+  lambda-raw:
     handler: raw-staged.main
     name: raw-to-stage
     memorySize: 600
     timeout: 900
-    role: arn:aws:iam::181076026206:role/LabRole
+    role: arn:aws:iam::965421732820:role/LabRole
     layers:
       - arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:1
 
-
-
-  lambda2:
+  lambda-staged:
     handler: staged-consumed.main
     name: stage-to-consumed
     memorySize: 600
     timeout: 900
-    role: arn:aws:iam::181076026206:role/LabRole
+    role: arn:aws:iam::965421732820:role/LabRole
     layers:
       - arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:1
 
-
 resources:
   Resources:
-    #rds
+    #banco de dados
     MyDBInstance:
       Type: "AWS::RDS::DBInstance"
       Properties:
-        AllocatedStorage: 20
+        AllocatedStorage: "20"
         DBInstanceClass: db.t3.medium
         Engine: mysql
         MasterUsername: soybean
@@ -44,25 +43,35 @@ resources:
           - Key: Name
             Value: rds-soybean-gp4-sptech
 
-    s3BucketStaged:
+    #S3
+    rawSoybean:
       Type: AWS::S3::Bucket
       Properties:
         AccessControl: Private
-        BucketName: stagged-soybean-gp4-sptech
+        BucketName: raw-soybean-gp4-sptech-prod
+        Tags:
+          - Key: Name
+            Value: raw-soybean-gp4-sptech
+
+    staggedSoybean:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: Private
+        BucketName: stagged-soybean-gp4-sptech-prod
         Tags:
           - Key: Name
             Value: stagged-soybean-gp4-sptech
 
-    s3BucketConsumed:
+    consumedSoybean:
       Type: AWS::S3::Bucket
       Properties:
         AccessControl: Private
-        BucketName: consumed-soybean-gp4-sptech
+        BucketName: consumed-soybean-gp4-sptech-prod
         Tags:
           - Key: Name
             Value: consumed-soybean-gp4-sptech
 
-    #REDE
+    # #REDE
     myVPC:
       Type: AWS::EC2::VPC
       Properties:
@@ -90,7 +99,7 @@ resources:
         MapPublicIpOnLaunch: true
         AvailabilityZone: us-east-1a
         VpcId: !Ref myVPC
-        CidrBlock: 10.0.0.0/24
+        CidrBlock: 10.0.0.0/25
         Tags:
           - Key: Name
             Value: subnet-public-soyben-gp4-sptech
@@ -109,7 +118,7 @@ resources:
         SubnetId: !Ref mySubnet
         RouteTableId: !Ref myRouteTable
 
-    #SEGURANÇA
+    # #SEGURANÇA
     secGroupName:
       Type: AWS::EC2::SecurityGroup
       Properties:
@@ -126,34 +135,33 @@ resources:
           - Key: Name
             Value: sg_public_soyben_gp4_sptech
 
-    # INSTANCIA DESENVOLVIMENTO COM SPARK
+    # # INSTANCIA DESENVOLVIMENTO COM SPARK
+
     eipName:
       Type: AWS::EC2::EIP
       Properties:
         Domain: !Ref myVPC
         InstanceId: !Ref myEC2Instance
 
-    myEipAssociation:
-      Type: AWS::EC2::EIPAssociation
-      Properties:
-        EIP: !Ref eipName
-        InstanceId: !Ref myEC2Instance
+
 
     myEC2Instance:
       Type: AWS::EC2::Instance
       Properties:
         IamInstanceProfile: LabInstanceProfile
-        KeyName: key-par-public
+        KeyName: vockey
         SubnetId: !Ref mySubnet
-        ImageId: ami-0f34c5ae932e6f0e4
-        InstanceType: t2.micro
+        ImageId: ami-053b0d53c279acc90
+        InstanceType: t2.small
         SecurityGroupIds:
           - !Ref secGroupName
         Tags:
           - Key: Name
-            Value: instance-soybean-dev-gp4-sptech
+            Value: instance-soybean-prod-gp4-sptech
 
-    #ALERTA (SNS)
+
+    # #ALERTA (SNS)
+
     MySNSTopic:
       Type: "AWS::SNS::Topic"
       Properties:

@@ -7,8 +7,10 @@ from os import getenv
 from dotenv import load_dotenv; load_dotenv()
 from pathlib import Path
 from os.path import join
+from unidecode import unidecode
 
 from mysql_connection import MysqlConnection
+from hash_unhash import hash_item
 
 def get_all_pages_text_pdf(pdf: str) -> str:
     reader = PdfReader(pdf)
@@ -69,7 +71,7 @@ for line in all_text.splitlines():
             name: str = rg_name[0].split('AT4')[1]
             splitter = re.findall(r' - SALA \d+', name)
             if len(splitter) > 0:
-                list_names.append(name.split(splitter[0])[-1].replace('2013 -PROFMAT -', '').strip())
+                list_names.append(name.split(splitter[0])[-1].replace('2013 -PROFMAT -', '').strip().split(' ')[0])
 
 def label_race(row):
    name = row['name'].split(' ')[0].upper()
@@ -82,12 +84,36 @@ def label_race(row):
 
 generator = Faker()
 def generate_address(row):
-    return generator.address()
+    adress = generator.address()
+    adress = re.sub(r"\d", "*", str(adress))
+    return adress
 
-df = pd.DataFrame({'name': list_names, 'cpf': list_cpfs, 'rg': list_rgs})
+def generate_access_type(row):
+    return randint(1,2)
+
+def get_logins():
+    emails = ['gmail', 'hotmail']
+    logins = []
+    for i in range(len(list_names)):
+        name = unidecode(''.join(list_names[i].split(' ')[:2]).lower())
+        logins.append(f'{name}@{emails[randint(0,1)]}.com')
+    return logins
+
+def get_passwords():
+    passwords = []
+    for i in range(len(list_names)):
+        # passwd = generator.pystr(min_chars=None, max_chars=10)
+        passwd = list_names[i].split(' ')[0] + '123'
+        passwords.append(hash_item(passwd))
+    return passwords
+
+df = pd.DataFrame({'login': get_logins(), 'password': get_passwords(), 'name': list_names, 'cpf': list_cpfs, 'rg': list_rgs})
 df['age'] = pd.Series(range(18, 35)).sample(int(173), replace=True).array
 df['gender'] = df.apply(lambda row: label_race(row), axis=1)
 df['adress'] = df.apply(lambda row: generate_address(row), axis=1)
+df['access_type'] = df.apply(lambda row: generate_access_type(row), axis=1)
+
+df['code'] = None
 
 print(df.head())
 
@@ -98,5 +124,5 @@ df.to_excel(join(downloads_path, 'dados_vazados_clientes_pdf.xlsx'), index=True)
 mysql_db = MysqlConnection(
     getenv('USER_BD'), getenv('PASS_BD'), getenv('HOST_BD'))
 mysql_db.connect()
-mysql_db.insert_dataframe(df, 'dados_vazados_clientes_pdf', 'soybean', index=True)
+mysql_db.insert_dataframe(df, 'usuario', 'soybean', index=True)
 mysql_db.disconnect()
