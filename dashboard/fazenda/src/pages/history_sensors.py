@@ -65,7 +65,7 @@ def render(df_anemometro, df_bmp, df_dht, df_npk, df_tcrt, df_umigrain):
         graf_npk.update_layout(
             title_text=f"Porcentagem de Nitrogenio, Fosforo e Potassio agrupado por {temporal_slct}",
             xaxis_title='Data',
-            yaxis_title='NPK(%)'
+            yaxis_title='mg/Kg'
         )
 
         graf_tcrt = px.line(
