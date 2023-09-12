@@ -35,21 +35,24 @@ def correct_cpf(cpf: str) -> str:
         cpf+=str(randint(1,9))
     while len(cpf) > 11:
         cpf = cpf[:-1]
-    return anonymization(cpf, 3, 3)
+    return hash_item(cpf)
+    # return anonymization(cpf, 3, 3)
 
 def correct_rg(rg: str) -> str:
     while len(rg) < 9:
         rg+=str(randint(1,9))
     while len(rg) > 9:
         rg = rg[:-1]
-    return anonymization(rg, 2, 2)
+    print(rg)
+    return hash_item(rg)
+    # return anonymization(rg, 2, 2)
 
 all_text = get_all_pages_text_pdf('./dataset_students.pdf')
 
 list_rgs = []
 list_cpfs = []
 list_names = []
-list_cpfs.append('***07916***')
+list_cpfs.append('0x1278762b077c1cb2639.0x52c8c338e')
 for line in all_text.splitlines():
     if not line.isspace() and \
     not line.startswith('2013 -PROFMAT') and \

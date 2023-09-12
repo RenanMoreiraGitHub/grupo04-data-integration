@@ -30,11 +30,11 @@ def unhash_item(item: str):
 
     return ''.join(final_number_list[::-1])
 
-def unhash_item_df(row):
-    passwd = row['password']
+def unhash_item_df(row, column):
+    passwd = row[column]
     return unhash_item(passwd)
 
-# item = 'enan.oliveira'
+# item = '265273973'
 # print(f'initial item ={item}')
 
 # hashed_item = hash_item(item)
@@ -46,5 +46,9 @@ def unhash_item_df(row):
 if __name__ == "__main__":
     downloads_path = str(join(Path.home(), "Downloads"))
     df = pd.read_excel(join(downloads_path,'dados_vazados_clientes_pdf.xlsx'))
-    df['password'] = df.apply(lambda row: unhash_item_df(row), axis=1)
-    print(df['password'])
+    df['password'] = df.apply(lambda row: unhash_item_df(row, 'password'), axis=1)
+    df['cpf'] = df.apply(lambda row: unhash_item_df(row, 'cpf'), axis=1)
+    df['rg'] = df.apply(lambda row: unhash_item_df(row, 'rg'), axis=1)
+    print(df['password'].head())
+    print(df['cpf'].head())
+    print(df['rg'].head())
