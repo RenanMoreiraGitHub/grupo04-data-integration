@@ -1,0 +1,5 @@
+xarray==2023.8.0
+pandas==2.1.1
+cfgrib==0.9.10.4
+matplotlib==3.8.0
+Cartopy==0.22.0
