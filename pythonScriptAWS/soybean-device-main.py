@@ -103,19 +103,19 @@ def simulate_data():
         return data
 
 
-try:
-    mysql_connection = MysqlConnection(
-        getenv("USER_BD"), getenv("PASS_BD"), getenv("HOST_BD")
-    )
-    mysql_connection.connect()
-    while True:
-        data = simulate_data()
-        df = pd.DataFrame([data])
-        df = df.round(2)
-        mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
+# try:
+#     mysql_connection = MysqlConnection(
+#         getenv("USER_BD"), getenv("PASS_BD"), getenv("HOST_BD")
+#     )
+#     mysql_connection.connect()
+while True:
+    data = simulate_data()
+    df = pd.DataFrame([data])
+    df = df.round(2)
+#         mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
 
-except KeyboardInterrupt:
-    mysql_connection.disconnect()
+# except KeyboardInterrupt:
+#     mysql_connection.disconnect()
 
 # Disconnect from AWS IoT Core
 mqtt_client.disconnect()
