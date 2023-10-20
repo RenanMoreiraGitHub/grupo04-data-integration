@@ -23,6 +23,12 @@ runtime = "python3.9"
 
 buckets_names = ["raw-soybean-bucket", "staged-soybean-bucket", "consumed-soybean-bucket"]
 
+username_db_instance = "soybean"
+
+password_db_instance = "soybean123"
+
+db_subnet_group_name = ["Public Subnet 1", "Public Subnet 2"]
+
 tags = {
   Name = "soybean-dev"
 }

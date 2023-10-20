@@ -62,3 +62,18 @@ variable "buckets_names" {
   type        = list(string)
   description = "Names of buckets"
 }
+
+variable "username_db_instance" {
+  type        = string
+  description = "Username of database instance"
+}
+
+variable "password_db_instance" {
+  type        = string
+  description = "Password of database instance"
+}
+
+variable "db_subnet_group_name" {
+  type        = list(string)
+  description = "Name of database subnet group"
+}
