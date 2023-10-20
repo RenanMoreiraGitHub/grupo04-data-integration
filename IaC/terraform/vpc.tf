@@ -3,4 +3,6 @@ resource "aws_vpc" "main" {
   tags = {
     Name = "soybean-vpc"
   }
+
+  enable_dns_hostnames = true
 }
