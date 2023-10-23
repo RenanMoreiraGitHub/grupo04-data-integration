@@ -95,7 +95,7 @@ def process_cptec(file: str):
 
     # Show the plot
     file_name = f'{splitext(file)[0]}.jpeg'
-    plt.savefig(file_name, bbox_inches='tight')
+    plt.savefig(file_name)
     return file_name
 
 def clean():
