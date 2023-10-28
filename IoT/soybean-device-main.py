@@ -17,18 +17,30 @@ import pandas as pd
 
 load_dotenv()
 
+# logging.getLogger("AWSIoTPythonSDK.core").setLevel(logging.DEBUG)
 
 # Add these lines before the AWSIoTMQTTClient configuration
 # Set the logging level to DEBUG
-logging.getLogger("AWSIoTPythonSDK.core").setLevel(logging.DEBUG)
+
+with open("certificados/outputs.json", "r") as file:
+    data = json.load(file)
+
+with open("certificados/AmazonRootCA1.pem", "w") as output_file:
+    output_file.write(data["ca"]["value"])
+
+with open("certificados/private_key.pem.key", "w") as output_file:
+    output_file.write(data["key"]["value"])
+
+with open("certificados/certificate.pem.crt", "w") as output_file:
+    output_file.write(data["cert"]["value"])
 
 
-# AWS IoT Core settings
-endpoint = "a30opv7455ikaq-ats.iot.us-east-1.amazonaws.com"
+endpoint = data["iot_endpoint"]["value"]
 root_ca_path = "certificados/AmazonRootCA1.pem"
-private_key_path = "certificados/77552a79e326f62d3feb20e9ba08ea9da2ab5cfedfc174692291de12f8c5facb-private.pem.key"
-certificate_path = "certificados/77552a79e326f62d3feb20e9ba08ea9da2ab5cfedfc174692291de12f8c5facb-certificate.pem.crt"
-client_id = "iotconsole-a67f9bf9-0059-4c59-a8c1-455e1272b31c"
+private_key_path = "certificados/private_key.pem.key"
+certificate_path = "certificados/certificate.pem.crt"
+client_id = "iotconsole-db28081b-7473-4584-87cc-87bb2992f12e"
+
 
 # Create an AWS IoT MQTT client
 mqtt_client = AWSIoTMQTTClient(client_id)
@@ -94,9 +106,8 @@ def simulate_data():
         }
 
         payload = json.dumps(data)
-        topic = "soybean-device"  # Replace with your topic name
+        topic = "thing_soybean"  
 
-        # Publish the temperature data
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
         time.sleep(0.3)
@@ -112,10 +123,10 @@ while True:
     data = simulate_data()
     df = pd.DataFrame([data])
     df = df.round(2)
-#         mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
+    #         mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
 
-# except KeyboardInterrupt:
-#     mysql_connection.disconnect()
+    # except KeyboardInterrupt:
+    #     mysql_connection.disconnect()
 
-# Disconnect from AWS IoT Core
-mqtt_client.disconnect()
+    # Disconnect from AWS IoT Core
+    mqtt_client.disconnect()
