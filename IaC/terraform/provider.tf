@@ -1,3 +1,7 @@
+#terraform output -json >> ../../IoT/certificados/outputs.json
+
+
+
 terraform {
   required_providers {
     aws = {
