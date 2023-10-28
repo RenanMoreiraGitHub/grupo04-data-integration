@@ -22,24 +22,11 @@ load_dotenv()
 # Add these lines before the AWSIoTMQTTClient configuration
 # Set the logging level to DEBUG
 
-with open("certificados/outputs.json", "r") as file:
-    data = json.load(file)
-
-with open("certificados/AmazonRootCA1.pem", "w") as output_file:
-    output_file.write(data["ca"]["value"])
-
-with open("certificados/private_key.pem.key", "w") as output_file:
-    output_file.write(data["key"]["value"])
-
-with open("certificados/certificate.pem.crt", "w") as output_file:
-    output_file.write(data["cert"]["value"])
-
-
-endpoint = data["iot_endpoint"]["value"]
+endpoint = "a30opv7455ikaq-ats.iot.us-east-1.amazonaws.com"
 root_ca_path = "certificados/AmazonRootCA1.pem"
-private_key_path = "certificados/private_key.pem.key"
-certificate_path = "certificados/certificate.pem.crt"
-client_id = "iotconsole-db28081b-7473-4584-87cc-87bb2992f12e"
+private_key_path = "certificados/39745920a5756684903b612bdf5588a03708deacda10a3aff38268264ca6a2bd-private.pem.key"
+certificate_path = "certificados/39745920a5756684903b612bdf5588a03708deacda10a3aff38268264ca6a2bd-certificate.pem.crt"
+client_id = "iotconsole-ca234365-f486-4570-9fb3-31a5f3ad2714"
 
 
 # Create an AWS IoT MQTT client
@@ -106,11 +93,11 @@ def simulate_data():
         }
 
         payload = json.dumps(data)
-        topic = "thing_soybean"  
+        topic = "soybean"
 
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
-        time.sleep(0.3)
+        time.sleep(1)
         return data
 
 
@@ -129,4 +116,4 @@ while True:
     #     mysql_connection.disconnect()
 
     # Disconnect from AWS IoT Core
-    mqtt_client.disconnect()
+mqtt_client.disconnect()
