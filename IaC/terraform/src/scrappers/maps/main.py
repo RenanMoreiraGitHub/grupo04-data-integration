@@ -108,8 +108,7 @@ def upload_s3(file: str, bucket: str):
     s3.meta.client.upload_file(file, bucket, split(file)[-1])
 
 if __name__ == '__main__':
-    # BUCKET_RAW = 'raw-soybean-gp4-sptech-prod'
-    BUCKET_RAW = 'test-img-grupo04'
+    BUCKET_RAW = 'raw-soybean-bucket'
     file = download_cptec()
 
     img = process_cptec(file)

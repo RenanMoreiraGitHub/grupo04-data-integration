@@ -17,18 +17,17 @@ import pandas as pd
 
 load_dotenv()
 
+# logging.getLogger("AWSIoTPythonSDK.core").setLevel(logging.DEBUG)
 
 # Add these lines before the AWSIoTMQTTClient configuration
 # Set the logging level to DEBUG
-logging.getLogger("AWSIoTPythonSDK.core").setLevel(logging.DEBUG)
 
-
-# AWS IoT Core settings
 endpoint = "a30opv7455ikaq-ats.iot.us-east-1.amazonaws.com"
 root_ca_path = "certificados/AmazonRootCA1.pem"
-private_key_path = "certificados/77552a79e326f62d3feb20e9ba08ea9da2ab5cfedfc174692291de12f8c5facb-private.pem.key"
-certificate_path = "certificados/77552a79e326f62d3feb20e9ba08ea9da2ab5cfedfc174692291de12f8c5facb-certificate.pem.crt"
-client_id = "iotconsole-a67f9bf9-0059-4c59-a8c1-455e1272b31c"
+private_key_path = "certificados/39745920a5756684903b612bdf5588a03708deacda10a3aff38268264ca6a2bd-private.pem.key"
+certificate_path = "certificados/39745920a5756684903b612bdf5588a03708deacda10a3aff38268264ca6a2bd-certificate.pem.crt"
+client_id = "iotconsole-ca234365-f486-4570-9fb3-31a5f3ad2714"
+
 
 # Create an AWS IoT MQTT client
 mqtt_client = AWSIoTMQTTClient(client_id)
@@ -94,28 +93,29 @@ def simulate_data():
         }
 
         payload = json.dumps(data)
-        topic = "soybean-device"  # Replace with your topic name
+        topic = "soybean"
 
-        # Publish the temperature data
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
-        time.sleep(0.3)
+        time.sleep(0.5)
         return data
 
 
-# try:
-#     mysql_connection = MysqlConnection(
-#         getenv("USER_BD"), getenv("PASS_BD"), getenv("HOST_BD")
-#     )
-#     mysql_connection.connect()
-while True:
-    data = simulate_data()
-    df = pd.DataFrame([data])
-    df = df.round(2)
-#         mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
+try:
+    mysql_connection = MysqlConnection(
+        "soybean",
+        "soybean123",
+        "terraform-20231020122938937900000001.cerbmnica18k.us-east-1.rds.amazonaws.com",
+    )
+    mysql_connection.connect()
+    while True:
+        data = simulate_data()
+        df = pd.DataFrame([data])
+        df = df.round(2)
+        mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
 
-# except KeyboardInterrupt:
-#     mysql_connection.disconnect()
+except KeyboardInterrupt:
+    mysql_connection.disconnect()
 
 # Disconnect from AWS IoT Core
 mqtt_client.disconnect()
