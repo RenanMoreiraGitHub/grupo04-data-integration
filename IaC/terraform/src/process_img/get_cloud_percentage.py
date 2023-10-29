@@ -1,7 +1,14 @@
 import cv2
+import boto3
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
 
+def read_data_s3(bucket_path:str) -> str:
+    date = datetime.now().strftime("%Y%m%d")
+    s3 = boto3.resource('s3')
+    s3.download_file(bucket_path, f'MERGE_CPTEC_{date}.jpeg', f'data_raw\MERGE_CPTEC_{date}.jpeg')
+    return f'data_raw\MERGE_CPTEC_{date}.jpeg'
 
 def main(img_path:str) -> float:
     img = cv2.imread(img_path)
@@ -15,14 +22,17 @@ def main(img_path:str) -> float:
     percentage = (np.count_nonzero(sure_bg == 0) * 100)/(sure_bg.shape[0] * sure_bg.shape[1])
     return round(percentage, 2)
 
-def slice(path_img:str, path_save:str) -> None:
+def slice(path_img:str) -> str:
+    path_save = path_save.replace('data_raw','data')
     img = plt.imread(path_img)[58:-55, 192:-98]
     plt.imsave(path_save, img)
-
+    return path_save
 
 if __name__ =='__main__':
-    img = "data_raw\MERGE_CPTEC_20231016.jpeg"
-    file = "data\MERGE_CPTEC_20231016.png"
-    slice(img, file)
-    p = main(file)
-    print(p)
+    BUCKET = 'test-img-grupo04/img/'
+    img = read_data_s3(BUCKET)
+    file = slice(img)
+    percentage = main(file)
+    
+    #TO DO: SAVE IN SOME PLACE PLEASE
+    print(percentage)
