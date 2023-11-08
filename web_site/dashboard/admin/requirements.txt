@@ -1,3 +1,5 @@
 streamlit
 plotly
 statsmodels
+matplotlib
+opencv-python
