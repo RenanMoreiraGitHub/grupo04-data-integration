@@ -1,5 +1,10 @@
 import boto3
 import awswrangler as wr
+from os import getenv
+from mysql_connection import MysqlConnection
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def get_recent_file(bucket_name):
@@ -13,6 +18,12 @@ def main(event, context):
     last_filie = get_recent_file("staged-soybean-bucket")
     df = wr.s3.read_parquet(f"s3://staged-soybean-bucket/{last_filie}")
     df = df.round(2)
+    
+    mysql_db = MysqlConnection(
+    getenv('USER_BD'), getenv('PASS_BD'), getenv('HOST_BD'))
+    mysql_db.connect()
+    mysql_db.insert_dataframe(df, "dados_sensor", "soybean", index=False)
+    mysql_db.disconnect()
 
     print("INFO: Creating NPK table")
     df_npk = df[["device_id", "device_name", "n", "p", "k", "setor", "data_hora"]]
@@ -84,3 +95,5 @@ def main(event, context):
         dataset=True,
     )
     del df_umigrain
+
+main('x', 'x')
