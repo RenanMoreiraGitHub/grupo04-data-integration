@@ -5,6 +5,13 @@ data "archive_file" "lambda" {
   output_path = "src/${element(var.lambdas_names, count.index)}_payload.zip"
 }
 
+resource "aws_lambda_layer_version" "lambda_layer" {
+  filename   = "lambda_layer_payload.zip"
+  layer_name = "lambda_layer_name"
+
+  compatible_runtimes = ["nodejs16.x"]
+}
+
 resource "aws_lambda_function" "lambda" {
   count            = length(var.lambdas_names)
   function_name    = element(var.lambdas_names, count.index)
@@ -15,7 +22,7 @@ resource "aws_lambda_function" "lambda" {
   source_code_hash = data.archive_file.lambda[count.index].output_base64sha256
   memory_size      = 512
   timeout          = 180
-  layers           = [var.layer_arn]
+  layers           = [var.layer_arn,]
 
 }
 
