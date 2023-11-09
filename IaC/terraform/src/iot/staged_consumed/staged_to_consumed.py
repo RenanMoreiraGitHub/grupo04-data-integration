@@ -95,5 +95,3 @@ def main(event, context):
         dataset=True,
     )
     del df_umigrain
-
-main('x', 'x')
