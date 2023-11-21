@@ -97,20 +97,23 @@ def simulate_data():
 
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
-        time.sleep(0.5)
+        time.sleep(2)
         return data
 
+    # try:
+    #     mysql_connection = MysqlConnection(
+    #         "soybean",
+    #         "soybean123",
+    #         "terraform-20231020122938937900000001.cerbmnica18k.us-east-1.rds.amazonaws.com",
+    #     )
+    #     mysql_connection.connect()
 
-# try:
-#     mysql_connection = MysqlConnection(
-#         "soybean",
-#         "soybean123",
-#         "terraform-20231020122938937900000001.cerbmnica18k.us-east-1.rds.amazonaws.com",
-#     )
-#     mysql_connection.connect()
-#     while True:
-#         data = simulate_data()
-#         df = pd.DataFrame([data])
+
+while True:
+    data = simulate_data()
+    # df = pd.DataFrame([data])
+
+
 #         df = df.round(2)
 #         mysql_connection.insert_dataframe(df, "dados_sensor", "soybean", index=False)
 
