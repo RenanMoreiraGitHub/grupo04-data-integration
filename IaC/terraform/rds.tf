@@ -7,11 +7,13 @@ resource "aws_db_subnet_group" "default" {
 }
 
 resource "aws_db_instance" "default" {
-  allocated_storage    = 10
-  engine               = "mysql"
-  engine_version       = "8.0"
-  instance_class       = "db.t2.micro"
-  username             = var.username_db_instance
+  allocated_storage = 10
+  engine            = "mysql"
+  engine_version    = "8.0"
+  instance_class    = "db.t2.micro"
+  username          = var.username_db_instance
+  name              = "soybean_db_instance"
+
   password             = var.password_db_instance
   parameter_group_name = "default.mysql8.0"
   skip_final_snapshot  = true
@@ -21,5 +23,6 @@ resource "aws_db_instance" "default" {
 
   tags = {
     Name : "soybean-db-instance"
+    name : "soybean-db-instance"
   }
 }

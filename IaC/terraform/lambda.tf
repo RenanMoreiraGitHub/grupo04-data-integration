@@ -35,7 +35,7 @@ resource "aws_lambda_function" "lambda" {
     variables = {
       USER_BD = "soybean"
       PASS_BD = "soybean123"
-      HOST_BD = "terraform-20231020122938937900000001.cerbmnica18k.us-east-1.rds.amazonaws.com"
+      HOST_BD = "terraform-20231122001505683200000001.cpwc9uwxfpfh.us-east-1.rds.amazonaws.com"
     }
   }
 }
