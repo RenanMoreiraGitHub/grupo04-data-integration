@@ -22,11 +22,11 @@ load_dotenv()
 # Add these lines before the AWSIoTMQTTClient configuration
 # Set the logging level to DEBUG
 
-endpoint = "a30opv7455ikaq-ats.iot.us-east-1.amazonaws.com"
+endpoint = "avmwwh3k35ofh-ats.iot.us-east-1.amazonaws.com"
 root_ca_path = "certificados/AmazonRootCA1.pem"
-private_key_path = "certificados/39745920a5756684903b612bdf5588a03708deacda10a3aff38268264ca6a2bd-private.pem.key"
-certificate_path = "certificados/39745920a5756684903b612bdf5588a03708deacda10a3aff38268264ca6a2bd-certificate.pem.crt"
-client_id = "iotconsole-ca234365-f486-4570-9fb3-31a5f3ad2714"
+private_key_path = "certificados/f1d325fa4a02c8c390d39ffdb329af3da9aaea68a4c409abe868b4d0c7d22691-private.pem.key"
+certificate_path = "certificados/f1d325fa4a02c8c390d39ffdb329af3da9aaea68a4c409abe868b4d0c7d22691-certificate.pem.crt"
+client_id = "iotconsole-2fc5f184-637f-4e4e-8931-5ed598cd4d68"
 
 
 # Create an AWS IoT MQTT client
@@ -97,7 +97,7 @@ def simulate_data():
 
         mqtt_client.publish(topic, payload, 1)
         print(f"Published: {payload}")
-        time.sleep(2)
+        time.sleep(10)
         return data
 
     # try:

@@ -15,7 +15,7 @@ cidr_block_all_public = "0.0.0.0/0"
 
 lambdas_names = ["raw_to_staged", "staged_to_consumed"]
 
-role_for_lambda = "arn:aws:iam::965421732820:role/LabRole"
+role_for_lambda = "arn:aws:iam::479480645395:role/LabRole"
 
 layer_arn = "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:2"
 
