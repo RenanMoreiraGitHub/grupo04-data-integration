@@ -46,12 +46,23 @@ region_mapping = {
     'SE': 'Nordeste',
     'TO': 'Norte'
 }
+acronym_mapping = {
+    'Sul': 'S',
+    'Norte': 'N',
+    'Sudeste': 'SE',
+    'Nordeste': 'NE',
+    'Centro Oeste': 'CO',
+}
+
 def map_to_region(state):
-    return region_mapping.get(state, 'Outro estado')
+    return region_mapping.get(state, 'Outro')
+def map_to_acronym(region):
+    return acronym_mapping.get(region, 'Outro')
 
 df_export['region'] = df_export['state'].apply(map_to_region)
+df_export['acronym'] = df_export['region'].apply(map_to_acronym)
 
-print(df_export.head())
+print(df_export.head(30))
 
 downloads_path = str(join(Path.home(), "Downloads"))
 print(f'Downloading dataset export to {downloads_path}...')
