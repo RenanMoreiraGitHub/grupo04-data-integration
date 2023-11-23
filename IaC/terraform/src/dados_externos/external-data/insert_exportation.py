@@ -16,7 +16,40 @@ df_export['date'] = pd.to_datetime(df_export['date'])
 del df_export['CO_ANO']
 del df_export['CO_MES']
 df_export.rename(columns={'SG_UF_NCM': 'state', 'KG_LIQUIDO': 'kg'}, inplace=True)
-df_export['region'] = 'brazil'
+
+region_mapping = {
+    'AC': 'Norte',
+    'AL': 'Nordeste',
+    'AP': 'Norte',
+    'AM': 'Norte',
+    'BA': 'Nordeste',
+    'CE': 'Nordeste',
+    'DF': 'Centro Oeste',
+    'ES': 'Sudeste',
+    'GO': 'Centro Oeste',
+    'MA': 'Nordeste',
+    'MT': 'Centro Oeste',
+    'MS': 'Centro Oeste',
+    'MG': 'Sudeste',
+    'PA': 'Norte',
+    'PB': 'Nordeste',
+    'PR': 'Sul',
+    'PE': 'Nordeste',
+    'PI': 'Nordeste',
+    'RJ': 'Sudeste',
+    'RN': 'Nordeste',
+    'RS': 'Sul',
+    'RO': 'Norte',
+    'RR': 'Norte',
+    'SC': 'Sul',
+    'SP': 'Sudeste',
+    'SE': 'Nordeste',
+    'TO': 'Norte'
+}
+def map_to_region(state):
+    return region_mapping.get(state, 'Outro estado')
+
+df_export['region'] = df_export['state'].apply(map_to_region)
 
 print(df_export.head())
 
