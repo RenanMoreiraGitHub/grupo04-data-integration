@@ -7,6 +7,7 @@ import src.pages.history_rain as h_rain
 import src.pages.history_climate as h_climate
 import src.pages.history_price as h_price
 import src.pages.correlation as correlation
+import src.pages.prediction as prediction
 
 url = 'https://docs.google.com/spreadsheets/d/18kady-AupCCbbpmUeYg81dC0b9Yks1K7oABQ3T8-n3Q/edit#gid=126564170'
 
@@ -79,12 +80,19 @@ def analysis():
 def call_google_sheet():
     st.markdown(f"Google Sheet: [link]({url})")
 
+def rain_prediction():
+    df_prediction = pd.read_parquet('datasets\pred.parquet')
+    df_prediction['data'] = pd.to_datetime(df_prediction['data']).dt.strftime('%d-%m')
+    df_prediction['prediction'] = df_prediction['prediction'].abs()
+    prediction.render(df_prediction)
+
 pages = {
     'Análises': analysis,
     'Histórico de chuva': rain_history,
     'Histórico do clima': climate_history,
     'Histórico de exportação': export_history,
     'Histórico de preço': money_history,
+    'Previsão de chuva': rain_prediction,
     'Google Sheet': call_google_sheet
 }
 
