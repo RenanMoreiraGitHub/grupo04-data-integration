@@ -82,8 +82,7 @@ def call_google_sheet():
 
 def rain_prediction():
     df_prediction = pd.read_parquet('datasets\pred.parquet')
-    df_prediction['data'] = pd.to_datetime(df_prediction['data']).dt.strftime('%d-%m')
-    df_prediction['prediction'] = df_prediction['prediction'].abs()
+    df_prediction['data'] = pd.to_datetime(df_prediction['data']).dt.strftime('%m-%d')
     prediction.render(df_prediction)
 
 pages = {
